@@ -56,3 +56,7 @@ ship as one plugin.
 If you installed manually via symlink instead, there's nothing to run — the
 symlink always points at this repo's current working tree, so a local `git pull`
 here is the update.
+
+## License
+
+[MIT](LICENSE)
