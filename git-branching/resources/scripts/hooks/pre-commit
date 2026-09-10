@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Refuses any commit made while `main` is checked out. Branching before the
+# first edit is a hard rule for every kind of work in this repo -- including
+# informal fixes with no tracking issue -- per the git-branching skill.
+# This hook is the technical backstop for that rule.
+#
+# Requires `git config core.hooksPath scripts/hooks` (one-time per clone,
+# since .git/hooks isn't tracked) -- see the git-branching skill's setup steps.
+set -euo pipefail
+
+branch="$(git symbolic-ref --short HEAD 2>/dev/null || true)"
+
+if [[ "$branch" == "main" ]]; then
+  cat >&2 <<'EOF'
+REFUSED: commit blocked -- 'main' is checked out.
+
+main is shared state. All work here -- a tracked issue or an informal fix
+with no tracking issue -- happens on a branch, created before the first
+edit:
+
+  git checkout main && git pull
+  git checkout -b <branch-name>
+
+See the git-branching skill.
+EOF
+  exit 1
+fi
+
+exit 0
