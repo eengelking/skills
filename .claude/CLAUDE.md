@@ -27,7 +27,7 @@ The operator uses shorthand in place of typing a full request out. Case-insensit
 
 ## Do Not
 
-- Edit directly on `main`, or merge a PR into `main` yourself — both are always the user's call.
+- Edit directly on `main` — for any change, no matter how small (a one-line doc fix included) or how informal (no tracking issue) — or merge a PR into `main` yourself. Both are always the user's call, no exceptions. See "Always Branch First" below.
 - Commit secrets, API keys, tokens, or credentials.
 - Force-push, skip commit safety checks, or bypass signing without the user's explicit, in-the-moment approval.
 - Delegate any task via a fork, no matter how narrow or read-only it looks — no exception.
@@ -36,6 +36,10 @@ The operator uses shorthand in place of typing a full request out. Case-insensit
 - Document architecture in this file — use `docs/ARCHITECTURE.md`.
 - Record current-state facts or status narrative in this file — facts belong in `CHANGELOG.md`; narrative belongs in commit history, PR descriptions, or `docs/ISSUES.md`.
 - Silently pick a reading, or "fix" it in passing, when code and `docs/SPEC.md` disagree — flag the contradiction and ask.
+
+## Always Branch First
+
+Before the first `Edit` or `Write` of *any* change to this repo — check the current branch. If it's `main`, create or switch to a working branch before touching a single file. This holds regardless of size ("just a typo fix"), formality ("no issue for this, just drafting"), or how the request was phrased ("draft a revised README" is still a change once you start writing it to disk) — the decision to skip a tracking issue and the decision to skip a branch are unrelated, and only the first is ever legitimate. See `git-branching` for the mechanics, including the pre-commit hook that backstops this rule technically rather than relying on memory alone.
 
 ## Skills
 
