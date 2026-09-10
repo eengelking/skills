@@ -6,5 +6,6 @@
     "name": "Ed Engelking",
     "url": "https://github.com/eengelking"
   },
-  "homepage": "https://github.com/eengelking/skills"
+  "homepage": "https://github.com/eengelking/skills",
+  "license": "MIT"
 }
