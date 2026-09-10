@@ -10,8 +10,8 @@ directory is a frozen historical archive of everything completed before this
 skill's rewrite (see CLAUDE.md's Current state). An issue's body carries what a
 `archived/tasks/NNN-slug.md` file used to: Requirements, Definition of Done, Out of Scope,
 the docs/SPEC.md section(s) it implements, a Validation command list, and a
-Checklist — written from `templates/gh-issue.md` (see `feature-development` for how
-an issue gets created in the first place).
+Checklist — written from the `github-issue-filing` skill's `resources/gh-issue.md`
+template (see that skill for how an issue gets created in the first place).
 
 ## Sequencing
 
@@ -107,8 +107,8 @@ never the validation command — and re-run. Only open the PR once the checklist
 fully checked and validation passes.
 
 **The checklist is never fully checked until its `documentation-sync` pass item is checked
-too.** `templates/gh-issue.md` carries a standing Definition-of-Done line and
-checklist item for this — don't treat "load documentation-sync before committing" as
+too.** `github-issue-filing`'s `resources/gh-issue.md` template carries a standing
+Definition-of-Done line and checklist item for this — don't treat "load documentation-sync before committing" as
 sufficient on its own; the issue's own checklist is what makes the pass a checkable,
 verifiable part of "done" rather than something that relies on an agent remembering
 to do it unprompted. If an older issue predates that template line, add the item to
