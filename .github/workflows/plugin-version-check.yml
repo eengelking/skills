@@ -1,0 +1,40 @@
+name: Plugin version bump check
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  check-version-bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine whether this PR touches skill content
+        id: changed
+        run: |
+          git diff --name-only "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}" > /tmp/changed_files.txt
+          if grep -Eq '^skills/[^/]+/(SKILL\.md|resources/)' /tmp/changed_files.txt; then
+            echo "skill_content_changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skill_content_changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Require a plugin.json version bump when skill content changed
+        if: steps.changed.outputs.skill_content_changed == 'true'
+        run: |
+          base_version=$(git show "${{ github.event.pull_request.base.sha }}:.claude-plugin/plugin.json" | jq -r '.version')
+          head_version=$(git show "${{ github.event.pull_request.head.sha }}:.claude-plugin/plugin.json" | jq -r '.version')
+          echo "base version: $base_version"
+          echo "head version: $head_version"
+          if [ "$base_version" = "$head_version" ]; then
+            echo "::error::This PR changes a SKILL.md or a skill's resources/ but .claude-plugin/plugin.json's version field ($base_version) was not bumped. See the documentation-sync skill's 'editing a skill in this repo' rule."
+            exit 1
+          fi

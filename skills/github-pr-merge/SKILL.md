@@ -43,6 +43,11 @@ still merged with `--squash`, same as any other PR — see "Reviewing and mergin
 below for why — but that's a fact about the merge command, not something the PR body
 itself needs to state.)
 
+**If this PR targets `main` and touches a skill's `SKILL.md` or
+`resources/`, a required CI check (`plugin-version-check`) will fail the PR
+if `.claude-plugin/plugin.json`'s `version` wasn't bumped** — bump it before
+opening, per `documentation-sync`, rather than finding out from a red check.
+
 An open PR is a checkpoint: don't merge it, push more work past it silently, or start
 the next issue until the user has reviewed it. A parallel batch's sibling branches
 are the exception, since they don't block each other.
@@ -149,8 +154,12 @@ self-report:
   the diff) were genuinely done, not skipped or copied from a prior check.
 - Spot-check the change against this repo's own content/code-quality rules — its
   equivalent of a `content-authoring`- or `code-review`-style skill, if one exists.
-- Confirm the PR stayed scoped to that issue's own files (no edits to shared docs
-  like `CHANGELOG.md`, CLAUDE.md, or another issue's own files).
+- Confirm the PR stayed scoped to that issue's own files (no edits to shared
+  docs like `CHANGELOG.md`, CLAUDE.md, `.claude-plugin/plugin.json`, or
+  another issue's own files). `plugin.json`'s version bump in particular
+  belongs only to the orchestrator's own consolidation pass before the
+  batch's final PR to `main` — see `documentation-sync`'s "editing a skill in
+  this repo" special case.
 
 **If a problem is found, don't merge.** Launch a sub-agent to fix that specific
 problem on the same branch, then repeat the review before merging. Never merge a

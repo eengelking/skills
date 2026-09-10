@@ -33,6 +33,16 @@ the specific lines, and whether it's a scope violation or a fact mismatch. If
 nothing is wrong, say so plainly rather than manufacturing a finding.
 ```
 
+**Do not flag leftover sub-agent or integration branches as a finding.** If
+this validation runs mid-batch — its normal timing, since it runs after
+subagent PRs merge into the integration branch but before that integration
+branch's own PR into `main` — every sub-agent branch and the integration
+branch itself are expected to still exist. Per `github-pr-merge`, branch and
+worktree cleanup happens only after the batch's *final*
+integration-branch-to-`main` PR merges, not per sub-agent-PR-merge. A branch
+still present at this point is normal batch-in-progress state, not a hygiene
+defect — don't report it as one.
+
 ## Checklist
 
 - Diff each subagent's PR against its assignment from Step 5 — anything touched
@@ -48,3 +58,5 @@ nothing is wrong, say so plainly rather than manufacturing a finding.
 - Never edit anything. If a finding is severe enough that leaving it feels
   wrong, that urgency belongs in how the finding is reported, not in an
   unauthorized fix.
+- Don't report an un-deleted sub-agent branch or the integration branch
+  itself as a finding — see the caveat above about cleanup timing.

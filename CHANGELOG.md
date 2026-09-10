@@ -46,6 +46,20 @@ once it starts cutting releases.
 - README consolidated into a single skill catalog table, with install
   instructions for both the plugin marketplace and manual symlinking, and
   guidance for picking up updates to installed skills.
+- `git-branching` now requires every parallel-batch sub-agent to be spawned
+  with `isolation: "worktree"`, grounded in a real incident where sub-agents
+  sharing one working directory clobbered each other's git checkouts.
+- `documentation-sync`'s plugin-version-bump rule now distinguishes a PR
+  targeting `main` (bump required) from a parallel-batch sub-agent's PR into
+  an integration branch (bump forbidden there; happens once at the
+  orchestrator's final consolidation instead); `github-pr-merge` and
+  `github-issue-workflow` add `.claude-plugin/plugin.json` to the shared
+  files a sub-agent must never touch, and `documentation-bootstrap`'s
+  cross-doc validator no longer flags a mid-batch sub-agent branch as a
+  stale-branch finding.
+- Added a GitHub Actions check (`.github/workflows/plugin-version-check.yml`)
+  that fails a PR into `main` if it changes a `SKILL.md` or a skill's
+  `resources/` without bumping `.claude-plugin/plugin.json`'s `version`.
 
 ### Fixed
 

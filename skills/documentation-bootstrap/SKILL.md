@@ -89,6 +89,10 @@ already define — don't re-derive it, follow it:
 
 - Integration branch off `main` for the whole run; each subagent branches from
   *that*, never from `main` directly.
+- Every subagent spawned for this batch must be spawned with `isolation:
+  "worktree"` — this is `git-branching`'s hard requirement, not optional here
+  just because the work is "just docs." Don't re-derive the reasoning; load
+  `git-branching` if you need it restated.
 - Each subagent is scoped to exactly one doc type (or its Step 4 cluster) and
   touches only that file — never let two subagents write to a shared,
   single-section file concurrently (e.g. if a top-up run somehow assigns two
@@ -131,6 +135,9 @@ whether to correct it yourself or spin up one more fix-round-capped subagent
 Follow `github-pr-merge`'s review, merge, and cleanup sections as written: one
 integration-branch-to-`main` PR for the whole batch, merged only by the user,
 followed by full branch and worktree cleanup, verified on both local and remote.
+If this run touched any skill's `SKILL.md` or `resources/`, this is also where
+the single `plugin.json` version bump happens (see the special case below) —
+before opening the batch's final PR to `main`.
 
 ## Special case: this run itself edits a skill in this repo
 
@@ -138,3 +145,9 @@ If you're running this skill inside the `skills` repo itself — bootstrapping t
 repo's own docs, or the PR that adds this skill in the first place — that's a
 `documentation-sync` "editing a skill in this repo" case too: bump the `version`
 field in `.claude-plugin/plugin.json` in the same PR, per that skill's own rule.
+
+**If this run is a parallel batch** (Step 5), the bump happens exactly once,
+during the orchestrator's Step 7 consolidation on the integration branch —
+never in an individual subagent's PR. A subagent's own PR targets the
+integration branch, not `main`, and per `documentation-sync`'s scoping rule, a
+PR that doesn't target `main` must not bump `plugin.json` itself.

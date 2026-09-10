@@ -166,3 +166,19 @@ addition sits in `main` but nobody who already installed the plugin gets it.
 Bump the patch component for wording/clarity fixes, the minor component for new
 guidance or behavior change, consistent with the version history already in that
 file.
+
+**This bump belongs only to a PR that targets `main` directly** — standalone
+work, or a parallel batch's final integration-branch-to-`main` PR. **A
+parallel-batch sub-agent's PR into the batch's integration branch must never
+bump `plugin.json` itself**, even if that sub-agent's own changes touch a
+`SKILL.md` or `resources/` file — bumping there produces a meaningless
+mid-batch diff, and a second sub-agent doing the same thing in parallel is a
+guaranteed merge conflict on the exact same line, the same class of problem
+this repo already avoids for `CHANGELOG.md`'s `[Unreleased]` section. Batch
+work touching skill content still needs exactly one bump — it happens once,
+during the orchestrator's own consolidation pass on the integration branch,
+right before opening the final PR to `main` (see `documentation-bootstrap`
+Step 7). A GitHub Actions check enforces the `main`-targeting half of this
+rule — see `.github/workflows/plugin-version-check.yml` — but the
+don't-bump-in-a-sub-agent-PR half isn't separately enforced, so hold the line
+on it manually until/unless that changes.
