@@ -15,7 +15,7 @@ python -m scripts.validate_content
 python -m scripts.load_content
 python -m scripts.check_distractor_bias   # add --refs GLOB or --since GIT_REF to scope a deepening
                                            # pass to just its own new/changed refs, --verbose for full
-                                           # ref lists (see content-authoring skill)
+                                           # ref lists
 python -m scripts.check_command_regex --verbose
 python -m scripts.check_exam_currency --verbose   # add --as-of YYYY-MM-DD to preview a future date
 python -m scripts.backup_db
