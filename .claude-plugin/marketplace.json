@@ -7,7 +7,7 @@
   "plugins": [
     {
       "name": "skills",
-      "description": "Shared Claude Code skills for the git/PR/issue lifecycle, documentation sync, and generic dev tooling, reusable across projects.",
+      "description": "Shared Claude Code skills for the git/PR/issue lifecycle, git safety, documentation sync, and generic dev tooling, reusable across projects.",
       "source": "."
     }
   ]
