@@ -1,6 +1,6 @@
 ---
 name: github-issue-filing
-description: Converts docs/ISSUES.md staging entries — or a finding raised directly in conversation — into properly labeled GitHub issues, checking for existing duplicates first and grouping related reports under one issue by root cause (splitting back out only when a report actually bundles more than one distinct Definition of Done). Precondition — asked to process docs/ISSUES.md, or asked to file a specific finding as a GitHub issue. Postcondition — every fileable unit of work exists as exactly one GitHub issue (title, body from this skill's templates/gh-issue.md, correct label(s)), no duplicate was created for something already tracked, any processed docs/ISSUES.md entries are deleted, and the change is committed and opened as a PR per git-branching/github-pr-merge. Load this before converting docs/ISSUES.md findings into GitHub issues, or when asked to "file the issues", "process ISSUES.md", or "clear the backlog into GitHub."
+description: Converts docs/ISSUES.md staging entries — or a finding raised directly in conversation — into properly labeled GitHub issues, checking for existing duplicates first and grouping related reports under one issue by root cause (splitting back out only when a report actually bundles more than one distinct Definition of Done). Precondition — asked to process docs/ISSUES.md, or asked to file a specific finding as a GitHub issue. Postcondition — every fileable unit of work exists as exactly one GitHub issue (title, body from this skill's resources/gh-issue.md, correct label(s)), no duplicate was created for something already tracked, any processed docs/ISSUES.md entries are deleted, and the change is committed and opened as a PR per git-branching/github-pr-merge. Load this before converting docs/ISSUES.md findings into GitHub issues, or when asked to "file the issues", "process ISSUES.md", or "clear the backlog into GitHub."
 ---
 
 # Filing GitHub issues
@@ -98,8 +98,8 @@ with no actual work to do.
    frontmatter declares the label it applies (e.g. `bug_report.md` → `bug`,
    `feature_request.md` → `enhancement`). An issue can carry more than one label
    when it genuinely spans categories.
-2. For each fileable unit of work, copy this skill's `templates/gh-issue.md` and
-   fill it in:
+2. For each fileable unit of work, copy this skill's `resources/gh-issue.md` to a
+   scratch file and fill it in:
    - **Type** and **Reference** (omit the reference line if not applicable).
    - **Context**: quote or summarize the originating finding, so a reader with
      zero session context can trace why this issue exists — including every
