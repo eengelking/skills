@@ -14,6 +14,7 @@ one specific project's paths, tools, or conventions live in that project's own
 | [`github-issue-filing`](skills/github-issue-filing) | Converts a staging inbox of informally-noted findings into properly labeled GitHub issues. |
 | [`github-issue-workflow`](skills/github-issue-workflow) | Governs the lifecycle of a GitHub-issue-tracked unit of work, from starting it to closing it out. |
 | [`documentation-sync`](skills/documentation-sync) | Keeps a change's accompanying docs correct in the same commit — a generic framework for deciding what doc owns what, including SPEC.md-as-source-of-truth; a project's own doc-ownership table lives in that project's own `.claude/skills/`. |
+| [`documentation-bootstrap`](skills/documentation-bootstrap) | Backfills or tops up a project's missing doc set in bulk — doc-type selection, a sequencing rule shared across parallel doc-writing sub-agents, and a post-bootstrap consistency check. For a single commit's worth of doc sync, see `documentation-sync` instead. |
 | [`documentation-voice-guide`](skills/documentation-voice-guide) | Voice and prose conventions for user-facing writing (READMEs, commit messages, PR descriptions, issue bodies). |
 | [`development-commands`](skills/development-commands) | Running tests/lint, starting the app for UI work, and seeding a throwaway database, generically across projects. |
 | [`git-safety`](skills/git-safety) | Reference for dangerous git commands that need explicit per-use approval (force-push, hook-skipping flags, signing bypass, hard resets, branch/tag deletion, and more) and the practical routine for catching secrets before they're committed. |
@@ -27,8 +28,7 @@ one specific project's paths, tools, or conventions live in that project's own
 /plugin install skills@skills-marketplace
 ```
 
-This installs all of the skills above at once, and picks up updates on future
-`/plugin marketplace update` runs.
+This installs all of the skills above at once.
 
 ### Manually, for local development
 
@@ -37,3 +37,22 @@ Symlink the skill directory into a project's `.claude/skills/`, e.g.:
 ```sh
 ln -s /path/to/skills/skills/git-branching .claude/skills/git-branching
 ```
+
+## Updating
+
+When a skill in this repo changes, the plugin's `version` in `.claude-plugin/plugin.json`
+gets bumped in the same PR. To pick up a new version after installing via the
+marketplace:
+
+```
+/plugin marketplace update skills-marketplace
+```
+
+This refreshes the marketplace's metadata from this repo; Claude Code picks up the
+new version on your next session. There's no separate per-skill update step —
+`/plugin marketplace update` covers all of the skills above at once, since they
+ship as one plugin.
+
+If you installed manually via symlink instead, there's nothing to run — the
+symlink always points at this repo's current working tree, so a local `git pull`
+here is the update.
