@@ -1,6 +1,6 @@
 ---
 name: documentation-sync
-description: Covers going from an uncommitted change to a commit whose accompanying docs are correct, or a deliberate confirmation that none apply. Precondition — a change is staged or about to be committed, in any project. Postcondition — every doc that owns a slice the change touches is updated in the same commit — a state fact goes in the project's status doc (e.g. CLAUDE.md), a procedure goes in the skill that owns it, a spec-governed behavior defers to SPEC.md, and a case that fits neither cleanly gets asked about rather than guessed. Load this before committing any change, not just before a release — a change that isn't reflected in the doc describing it is exactly the kind of gap that's invisible until someone hits it. This is a generic, project-agnostic skill; a project's own doc-ownership table (which doc owns which kind of change, in that specific repo) belongs in that project's own `.claude/skills/`, not here.
+description: Covers going from an uncommitted change to a commit whose accompanying docs are correct, or a deliberate confirmation that none apply. Precondition — a change is staged or about to be committed, in any project. Postcondition — every doc that owns a slice the change touches is updated in the same commit — a state fact goes in the project's status doc (e.g. CLAUDE.md), a procedure goes in the skill that owns it, a spec-governed behavior defers to SPEC.md, and a case that fits neither cleanly gets asked about rather than guessed. Load this before committing any change, not just before a release — a change that isn't reflected in the doc describing it is exactly the kind of gap that's invisible until someone hits it. This is a generic, project-agnostic skill; a project's own doc-ownership table (which doc owns which kind of change, in that specific repo) belongs in that project's own `.claude/skills/`, not here. For bulk-backfilling or topping up a project's doc set — with parallel doc-writing subagents and cross-doc reconciliation — see the `documentation-bootstrap` skill instead.
 ---
 
 # Keeping documentation in sync
@@ -53,6 +53,14 @@ misses the other two:
    skill, a workflow concept) this change introduced that nothing currently
    describes? If so, that's a missing-doc gap even though no table row is stale —
    don't let "no row matched" read as "nothing to do."
+
+   If what's missing isn't one doc gap from this change but most or all of a
+   project's doc set — or a project that's never had some of these docs at
+   all — that's bulk scaffolding, not per-commit sync. Load
+   `documentation-bootstrap` for that instead; it handles the applicability pass
+   (which doc types actually apply here, and which already exist), parallel
+   doc-writing, and cross-doc fact reconciliation that a single-commit sync pass
+   isn't scoped for.
 
 If none of the project's table rows apply, say so — most commits (a single bug fix,
 a content correction) only need a changelog line. But check the table rather than
