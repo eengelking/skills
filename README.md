@@ -13,7 +13,7 @@ one specific project's paths, tools, or conventions live in that project's own
 | [`github-release`](skills/github-release) | Cutting a release once a PR has merged — CHANGELOG/SemVer policy, build verification, version bumps, artifact publishing, and the git tag + GitHub Release. |
 | [`github-issue-filing`](skills/github-issue-filing) | Converts a staging inbox of informally-noted findings into properly labeled GitHub issues. |
 | [`github-issue-workflow`](skills/github-issue-workflow) | Governs the lifecycle of a GitHub-issue-tracked unit of work, from starting it to closing it out. |
-| [`documentation-sync`](skills/documentation-sync) | Keeps a change's accompanying docs correct in the same commit — a framework for deciding what doc owns what, plus per-project doc-ownership tables. |
+| [`documentation-sync`](skills/documentation-sync) | Keeps a change's accompanying docs correct in the same commit — a generic framework for deciding what doc owns what, including SPEC.md-as-source-of-truth; a project's own doc-ownership table lives in that project's own `.claude/skills/`. |
 | [`documentation-voice-guide`](skills/documentation-voice-guide) | Voice and prose conventions for user-facing writing (READMEs, commit messages, PR descriptions, issue bodies). |
 | [`development-commands`](skills/development-commands) | Running tests/lint, starting the app for UI work, and seeding a throwaway database, generically across projects. |
 | [`git-safety`](skills/git-safety) | Reference for dangerous git commands that need explicit per-use approval (force-push, hook-skipping flags, signing bypass, hard resets, branch/tag deletion, and more) and the practical routine for catching secrets before they're committed. |
