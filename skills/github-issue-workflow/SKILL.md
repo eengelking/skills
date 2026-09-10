@@ -37,9 +37,10 @@ integration-branch structure applies:
 
 ## While working an issue
 
-- **If the issue references a spec or design doc section, read it before
-  starting** — the issue body is a pointer and a checklist, not a paraphrase good
-  enough to skip the source.
+- **If the issue references a `docs/SPEC.md` section (or this project's equivalent
+  single-source-of-truth requirements doc), read it before starting** — the issue
+  body is a pointer and a checklist, not a paraphrase good enough to skip the
+  source.
 - **Check off checklist items in the issue body as you complete them**, not in one
   batch at the end — fetch the current body (`gh issue view <n> --json body -q
   .body`), flip the relevant `- [ ]` to `- [x]`, then `gh issue edit <n>
