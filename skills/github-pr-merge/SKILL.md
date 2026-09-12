@@ -17,7 +17,13 @@ too.
 gh pr create
 ```
 
-Open once the issue's Definition of Done is met and its Validation section passes.
+Open once the issue's Definition of Done is met and its Validation section
+passes. For informal work with no tracking issue, open once you'd otherwise
+call the change finished and any relevant validation (tests, lint, a manual
+check) passes — don't wait for the user to separately say "commit" or "open
+the PR"; that instruction is this skill itself. This is about the commit/PR-open
+step only — it changes nothing about merging, which is always the user's call
+(see below).
 Keep the description accurate as further commits land.
 
 **If this PR resolves a GitHub issue and targets `main`, its body must include

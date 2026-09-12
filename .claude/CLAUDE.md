@@ -76,7 +76,7 @@ Order of operations for any tracked change. The policy is the invariant that hol
 | Phase | Policy | Skill |
 |---|---|---|
 | Start | Branch first, synced from current `main`. | `git-branching` |
-| Develop → PR | Changes land via PR; the user reviews and merges. Opening a PR is a stopping point, not a launchpad — it doesn't authorize starting the next unit of work unprompted. | `github-pr-merge` |
+| Develop → PR | Changes land via PR; the user reviews and merges. Once a change — issue-tracked or informal — is complete and passes its relevant checks, commit, push, and open the PR without waiting for a separate go-ahead; that's normal completion of the work, not a separate action to confirm. Opening a PR is still a stopping point, not a launchpad — it doesn't authorize starting the next unit of work unprompted, and merging remains the user's call, always. | `github-pr-merge` |
 | Merge & cleanup | A branch is deleted only after its merge is confirmed, not assumed. | `github-pr-merge` |
 | Release (if applicable) | A deliberate step after a PR merges, never an automatic side effect of merging — ask if it's unclear whether this project does releases at all. | `github-release` |
 | Dangerous git actions | See Do Not — a prior approval doesn't carry forward to the next instance. | `git-safety` |
