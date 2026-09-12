@@ -28,9 +28,10 @@ integration-branch structure applies:
   per-component issue: whatever that component's own files are, and nothing
   outside them).
 - Never let a parallel-batch agent touch a shared, ordered, single-section file
-  like `CHANGELOG.md`'s `[Unreleased]` section or CLAUDE.md's current-state
-  content — independent agents editing the same lines produces guaranteed merge
-  conflicts and drifting claims.
+  like `CHANGELOG.md`'s `[Unreleased]` section, CLAUDE.md's current-state
+  content, or `.claude-plugin/plugin.json`'s version field — independent
+  agents editing the same lines produces guaranteed merge conflicts and
+  drifting claims.
 - Load `git-branching` for the integration-branch structure this requires and
   `github-pr-merge` for how those branches get merged and the shared docs get
   consolidated.

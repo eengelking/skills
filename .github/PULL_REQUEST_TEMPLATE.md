@@ -6,8 +6,12 @@
 
 - [ ] Targets the right base branch (`main` for standalone work, or the batch's
       integration branch for a parallel-batch sub-agent PR).
-- [ ] If this touches a skill's `SKILL.md` or its `resources/`, the plugin
-      `version` in `.claude-plugin/plugin.json` was bumped to match.
+- [ ] If this PR targets `main` and touches a skill's `SKILL.md` or its
+      `resources/`, the plugin `version` in `.claude-plugin/plugin.json` was
+      bumped to match — CI (`plugin-version-check`) enforces this for any PR
+      into `main`. A sub-agent's PR into a parallel batch's integration
+      branch is exempt — that bump happens once, in the batch's final PR to
+      `main`.
 - [ ] Docs that describe this change are updated in the same PR (see the
       `documentation-sync` skill for what owns what).
 - [ ] Tests and lint pass, where this repo has any to run (see the

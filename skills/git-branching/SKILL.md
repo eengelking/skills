@@ -1,6 +1,6 @@
 ---
 name: git-branching
-description: Covers the front half of the git lifecycle — getting from no branch to the correct one. Precondition — about to edit any tracked file in this repo, whether that's a GitHub-issue-tracked unit of work, a parallel batch of issues, or an informal fix with no tracking issue at all; `main`'s state is not yet confirmed current. There is no category of work exempt from this — "it doesn't need a tracking issue" is not "it doesn't need a branch." Postcondition — on a correctly-named branch forked from the correct parent: sequential/informal work off `main`, a parallel batch's integration branch off `main`, and each sub-agent's branch off that integration branch (never off `main` directly). Covers what a worktree-isolated sub-agent needs to know about keeping its shell commands simple before the harness's isolation guard refuses one, and notes that a worktree outlives its branch's merge and needs its own cleanup (see github-pr-merge). Load this before the first Edit/Write of any session on this repo — including before writing a plan-mode implementation once approved — or before spawning a worktree-isolated sub-agent. For PR creation, merge permissions, and releases once the work is done, see the `github-pr-merge` skill instead.
+description: Covers the front half of the git lifecycle — getting from no branch to the correct one. Precondition — about to edit any tracked file in this repo, whether that's a GitHub-issue-tracked unit of work, a parallel batch of issues, or an informal fix with no tracking issue at all; `main`'s state is not yet confirmed current. There is no category of work exempt from this — "it doesn't need a tracking issue" is not "it doesn't need a branch." Postcondition — on a correctly-named branch forked from the correct parent: sequential/informal work off `main`, a parallel batch's integration branch off `main`, and each sub-agent's branch off that integration branch (never off `main` directly). Mandates `isolation: "worktree"` for every parallel-batch sub-agent spawn, covers what a sub-agent running in that worktree needs to know about keeping its shell commands simple before the harness's isolation guard refuses one, and notes that a worktree outlives its branch's merge and needs its own cleanup (see github-pr-merge). Load this before the first Edit/Write of any session on this repo — including before writing a plan-mode implementation once approved — or before spawning a worktree-isolated sub-agent. For PR creation, merge permissions, and releases once the work is done, see the `github-pr-merge` skill instead.
 ---
 
 # Starting work: branches in this repo
@@ -65,18 +65,30 @@ branch, since there's then no single branch the orchestrator can consolidate the
 round's shared-doc updates onto before anything reaches `main`. Double check which
 branch you're forking from before running `git checkout -b`.
 
-**If a sub-agent runs in an isolated worktree** (the orchestrator spawned it with
-worktree isolation rather than sharing the main checkout), it must run plain,
-single-purpose git/shell commands — one command per invocation, no chaining with `&&`
-or `;`, no heredocs. The harness's worktree-isolation guard refuses any command it
-can't statically verify stays scoped to that agent's own worktree path, and a chained
-or heredoc'd command is exactly what it can't verify — the refusal itself is correct
-behavior, but discovering the constraint by trial and error burns a retry and tokens
-for nothing. Confirm `pwd` resolves to the assigned worktree path before running
-anything, and do large or repetitive file edits with the Edit/Write tools rather than
-shell heredocs, which hit this guard every time. **The orchestrator should state this
-constraint directly in the sub-agent's spawn prompt** rather than let it learn the
-guard from an error.
+**Every parallel-batch sub-agent spawn MUST pass `isolation: "worktree"` on the
+`Agent` tool call — this is not optional and not situational.** Sub-agents
+sharing one working directory is a real, already-realized failure mode in this
+repo: a batch of 5 parallel sub-agents spawned without worktree isolation shared
+a single checkout, and concurrent `git checkout`/commit operations landed
+commits on the wrong branches and contaminated a PR with unrelated files. It was
+fully recovered, but only because someone caught it — don't rely on catching it
+again. If you are the orchestrator spawning a sub-agent for a parallel batch,
+`isolation: "worktree"` is a required field on that spawn call, not a judgment
+call to make per batch.
+
+**Once a sub-agent is running in its assigned worktree**, it must run plain,
+single-purpose git/shell commands — one command per invocation, no chaining
+with `&&` or `;`, no heredocs. The harness's worktree-isolation guard refuses
+any command it can't statically verify stays scoped to that agent's own
+worktree path, and a chained or heredoc'd command is exactly what it can't
+verify — the refusal itself is correct behavior, but discovering the
+constraint by trial and error burns a retry and tokens for nothing. Confirm
+`pwd` resolves to the assigned worktree path before running anything, and do
+large or repetitive file edits with the Edit/Write tools rather than shell
+heredocs, which hit this guard every time. **The orchestrator must state both
+of these — the worktree requirement and the plain-command constraint —
+directly in the sub-agent's spawn prompt**, not let it learn either one from
+an error.
 
 ## While working
 
