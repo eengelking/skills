@@ -10,6 +10,13 @@ once it starts cutting releases.
 
 ### Added
 
+- `spec-writing` skill for turning a rough idea, a premade brief, or a Q&A
+  session into a SPEC.md decomposable into unambiguous, dependency-ordered
+  tasks. Picks a flat/phased/staged-DAG weight class to match project size
+  (modeled on patterns observed across several real SPEC.md documents, from
+  small single-shot build specs up to a full task-DAG-with-orchestration-roles
+  spec), and hands off the actual `gh issue create` mechanics to
+  `github-issue-filing` rather than duplicating them.
 - Eight reusable skills, rescoped from project-specific originals into
   project-agnostic form: `git-branching`, `github-pr-merge`,
   `github-release`, `github-issue-filing`, `github-issue-workflow`,
