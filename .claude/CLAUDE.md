@@ -56,6 +56,7 @@ Procedural detail — the *how* behind the rules this file states — lives in s
 | `documentation-bootstrap` | Backfilling or topping up a project's missing doc set (bulk scaffolding, not a single commit's worth of sync) | Runs the doc-type selection pass, sets the sequencing rule, and runs the parallel batch (integration branch, post-bootstrap validation) | Writes its one assigned doc type per the orchestrator's sequencing rule; no merge authority |
 | `development-commands` | Running tests/lint, starting the app for UI review, seeding a database | Yes | Yes |
 | `git-safety` | Force-push, skipping commit checks, secrets review | Yes | Yes |
+| `retrospective` | Asked for a retrospective, or "what went well/could be improved," after nontrivial or multi-agent work | Yes | Yes |
 
 ## Working Style
 

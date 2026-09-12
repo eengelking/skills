@@ -29,6 +29,12 @@ once it starts cutting releases.
   expanded with an explicit "Always Branch First" rule.
 - `CODE_OF_CONDUCT.md`, adapted from the Contributor Covenant for a small
   single-maintainer project.
+- `retrospective` skill for running a post-hoc retrospective on a finished
+  piece of work: splitting went-well from went-wrong, tracing every
+  went-wrong item to a root cause, sorting each into a skill-instruction
+  gap / one-off model misjudgment / tool bug / genuinely-fine bucket, and
+  routing a real skill-gap finding through a concrete corrective plan and
+  the host project's own branch/PR/merge workflow rather than a shortcut.
 
 ### Changed
 
