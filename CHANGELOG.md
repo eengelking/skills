@@ -66,6 +66,12 @@ once it starts cutting releases.
 - Added a GitHub Actions check (`.github/workflows/plugin-version-check.yml`)
   that fails a PR into `main` if it changes a `SKILL.md` or a skill's
   `resources/` without bumping `.claude-plugin/plugin.json`'s `version`.
+- `CLAUDE.md`'s Git & GitHub Workflow table and `github-pr-merge`'s "Opening
+  a PR" section now say explicitly that committing and opening a PR for
+  informal, no-issue work happens once the change is finished and validated,
+  without waiting for a separate go-ahead — closing a gap where only
+  issue-tracked work had that instruction; merging into `main` remains
+  unchanged, always the user's call.
 
 ### Fixed
 
