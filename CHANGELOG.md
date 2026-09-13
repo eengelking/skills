@@ -8,6 +8,16 @@ once it starts cutting releases.
 
 ## [Unreleased]
 
+### Changed
+
+- Renamed the plugin (`.claude-plugin/plugin.json` and the marketplace entry in
+  `.claude-plugin/marketplace.json`) from `skills` to `eengelking`, so installed
+  skills invoke as `/eengelking:<skillName>` instead of `/skills:<skillName>`.
+  `skills` is a name other plugin authors are likely to reuse; this avoids
+  namespace collisions when multiple marketplaces are installed side by side.
+  No release has been tagged yet, so this has no upgrade impact for existing
+  installs.
+
 ### Added
 
 - `github-release`'s Staged-DAG opt-in now ties gate passage to actually

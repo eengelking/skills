@@ -27,7 +27,7 @@ one specific project's paths, tools, or conventions live in that project's own
 
 ```
 /plugin marketplace add eengelking/skills
-/plugin install skills@skills-marketplace
+/plugin install eengelking@skills-marketplace
 ```
 
 This installs all of the skills above at once.
