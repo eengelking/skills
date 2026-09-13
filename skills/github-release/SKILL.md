@@ -60,13 +60,17 @@ the place to record the answer for next time, not this skill.
     verified. Don't assume a dedicated gate-verification task exists or
     search for "the task carrying `gate:G-n`"; some projects do structure
     their last task that way, but the skill must work whether or not one
-    does. Cut the release once the gate passes, covering everything merged
-    in that stage since the prior gate. PATCH bumps still apply for
-    out-of-band fixes landing between gates. MAJOR rules and the pre-1.0
-    MINOR-can-break allowance above are unchanged. This is opt-in and
-    additive — repos using Flat or Phased spec classes, or no `spec-writing`
-    spec at all, keep the feature/fix/breaking judgment-call policy above
-    unchanged.
+    does. **A merged gate task is not a passed gate** — "every task merged"
+    is necessary but not sufficient; treat the gate as passed only once the
+    Staged-DAG Verifier role (`skills/spec-writing/resources/weight-classes.md`)
+    has actually been invoked *at the gate*, not just at each task — see that
+    role's entry for what that means concretely. Cut the release once the
+    gate passes, covering everything merged in that stage since the prior
+    gate. PATCH bumps still apply for out-of-band fixes landing between
+    gates. MAJOR rules and the pre-1.0 MINOR-can-break allowance above are
+    unchanged. This is opt-in and additive — repos using Flat or Phased spec
+    classes, or no `spec-writing` spec at all, keep the feature/fix/breaking
+    judgment-call policy above unchanged.
 - Tag format is `vMAJOR.MINOR.PATCH` (e.g. `v0.1.0`), annotated, cut from
   `main` only after the PR bringing `main` to the released state has actually
   merged — never from a work branch. See `resources/tag-and-github-release.md`.
@@ -92,7 +96,12 @@ the place to record the answer for next time, not this skill.
    repo's manifest: `resources/version-bump-npm.md`, `resources/version-bump-python.md`,
    or `resources/version-bump-cargo.md`. A repo with no versioned manifest
    (the version lives only in `CHANGELOG.md`/git tags) skips this resource
-   and just does the `CHANGELOG.md` half.
+   and just does the `CHANGELOG.md` half. The version can also live in places
+   none of those resources cover — an OpenAPI `info.version`, a committed API
+   snapshot, a Dockerfile `LABEL`, and similar. Grep the repo for the current
+   version string rather than assuming the manifest resource is the only spot
+   it appears, and re-grep on every release rather than trusting a
+   previously-known list — new version-bearing spots get added over time.
 3. **Publish**, only if this repo actually ships a built artifact — many
    repos don't, and skip straight to step 4. If it does:
    - Ships a **container image**: `resources/publish-container-image.md`
