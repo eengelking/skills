@@ -10,6 +10,17 @@ once it starts cutting releases.
 
 ### Added
 
+- `github-release`'s Staged-DAG opt-in now ties gate passage to actually
+  invoking `spec-writing`'s Verifier role at the gate (a fresh, non-implementer
+  agent re-running the gate test and full CI from a clean checkout), not just
+  every task in the stage having merged; `spec-writing`'s Verifier row gained
+  a matching "at a gate" entry, and `docs/DECISIONS.md`'s companion-doc note
+  now covers recording gate passage itself (gate id, commit SHA, verifier
+  report pointer).
+- `github-release`'s version-bump step now notes that a repo's version string
+  can live in more places than its manifest resource covers (OpenAPI
+  `info.version`, an API snapshot, a Dockerfile `LABEL`, etc.) — grep for it
+  fresh on every release rather than trusting a previously-known list.
 - `github-release` policy option for repos using `spec-writing`'s Staged-DAG
   weight class: tie MINOR version bumps to stage-gate passage instead of a
   per-PR feature/fix judgment call, since the spec's own gates already give

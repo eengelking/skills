@@ -119,6 +119,7 @@ explicitly, not assumed:
 | Coordinator | Assigns ready tasks (every dependency merged and green), resolves ownership disputes, declares gates passed | Implement tasks |
 | Implementer | Implements exactly one task, in its own branch, to its acceptance criteria | Touch paths outside its `Owns`; merge its own work |
 | Verifier | A *different* agent from the implementer; checks each acceptance criterion against a test in the merged diff, re-runs the suite from clean state | Fix what it finds — a verifier that patches code stops being able to verify it |
+| Verifier, at a gate | Same rules, applied to the whole stage, not one task: a fresh, non-implementer agent, from a clean checkout of `main` — not cached state, not any implementer's self-report — re-runs this repo's gate test plus its full CI suite (however this repo's own `development-commands` or docs define "green"). Only a clean pass from that independent run counts as the gate having passed; see `github-release`'s Staged-DAG opt-in for what a passed gate then authorizes | Treat every task in the stage merging as sufficient on its own |
 | Integrator | Runs the merge queue in dependency order; may be the coordinator | Merge red CI, or a task that failed verification |
 
 State a lifecycle explicitly too (a minimal version: `todo → assigned →
@@ -140,8 +141,10 @@ with what changed and why.
 
 **Companion docs.** `docs/GOTCHAS.md` (patterns and gotchas discovered
 mid-build, appended by whichever task finds them) and `docs/DECISIONS.md`
-(interpretations of ambiguity, and contract-freeze status) — both plain docs
-edited directly by whoever needs to add an entry, no coordinator fold step.
+(interpretations of ambiguity, contract-freeze status, and gate passage
+itself — gate id, commit SHA, and a pointer to the verifier's report) — both
+plain docs edited directly by whoever needs to add an entry, no coordinator
+fold step.
 
 Use `resources/templates/dag.md` as the skeleton and `resources/task-card.md`
 for the per-task card shape (this is the shape a task-writing agent expands
