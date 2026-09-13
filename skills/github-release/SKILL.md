@@ -47,6 +47,26 @@ the place to record the answer for next time, not this skill.
     promise to consumers, not a reflection of implementation effort. If it's
     genuinely ambiguous whether something is patch- or minor-sized, ask the
     user rather than guessing.
+  - **Staged-DAG opt-in:** a repo whose spec uses `spec-writing`'s Staged-DAG
+    weight class (`skills/spec-writing/resources/weight-classes.md`) may tie
+    MINOR bumps to gate passage instead of feature/fix judgment — the spec's
+    own stage gates already give it natural release checkpoints, so the
+    judgment call is redundant there. Per that class's definition, a gate is
+    not a single dedicated task but an emergent property of the stage: "a
+    gate only passes once every task in its stage is merged and verified."
+    So the release point is the merge that completes the stage — whichever
+    task happens to be the last one in that stage still unmerged, once its
+    merge leaves every task carrying that stage's gate label merged and
+    verified. Don't assume a dedicated gate-verification task exists or
+    search for "the task carrying `gate:G-n`"; some projects do structure
+    their last task that way, but the skill must work whether or not one
+    does. Cut the release once the gate passes, covering everything merged
+    in that stage since the prior gate. PATCH bumps still apply for
+    out-of-band fixes landing between gates. MAJOR rules and the pre-1.0
+    MINOR-can-break allowance above are unchanged. This is opt-in and
+    additive — repos using Flat or Phased spec classes, or no `spec-writing`
+    spec at all, keep the feature/fix/breaking judgment-call policy above
+    unchanged.
 - Tag format is `vMAJOR.MINOR.PATCH` (e.g. `v0.1.0`), annotated, cut from
   `main` only after the PR bringing `main` to the released state has actually
   merged — never from a work branch. See `resources/tag-and-github-release.md`.
@@ -62,7 +82,10 @@ the place to record the answer for next time, not this skill.
    language with a real compile step) or `resources/build-verify-interpreted.md`
    (Python, Node/TypeScript, or similar). A repo with more than one language
    runs both. Gate on whatever this repo's own testing skill defines as
-   "green," if it has one.
+   "green," if it has one. For a repo using the Staged-DAG opt-in above, "a
+   PR bringing `main` to a releasable state" means specifically the PR whose
+   merge completes a stage's gate — after it, every task in that stage is
+   merged and verified.
 2. **Version-bump.** Bump `CHANGELOG.md` (policy above) plus any manifest
    this repo tracks its version in, in the same commit — never a follow-up
    commit, so they can't drift out of sync. Pick the resource matching this

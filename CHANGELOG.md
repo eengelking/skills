@@ -10,6 +10,11 @@ once it starts cutting releases.
 
 ### Added
 
+- `github-release` policy option for repos using `spec-writing`'s Staged-DAG
+  weight class: tie MINOR version bumps to stage-gate passage instead of a
+  per-PR feature/fix judgment call, since the spec's own gates already give
+  the project natural release checkpoints. Opt-in and additive — repos on
+  Flat/Phased spec classes, or with no `spec-writing` spec, are unaffected.
 - `spec-writing` skill for turning a rough idea, a premade brief, or a Q&A
   session into a SPEC.md decomposable into unambiguous, dependency-ordered
   tasks. Picks a flat/phased/staged-DAG weight class to match project size
