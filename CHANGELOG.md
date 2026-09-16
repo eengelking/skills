@@ -8,6 +8,17 @@ once it starts cutting releases.
 
 ## [Unreleased]
 
+### Added
+
+- `github-issue-workflow`'s "Closing out an issue" section now requires
+  independently re-running an issue's Validation commands and checking the
+  diff against its file scope whenever any part of the work was delegated to
+  a subagent — solo, sequential delegation included, not just a parallel
+  batch. A subagent's self-report (test counts, "verification passed", scope
+  claims) is a claim, not a check. `github-pr-merge`'s existing parallel-batch
+  review checklist now cross-references this as the general form of the same
+  rule, so the two don't drift apart over time.
+
 ### Changed
 
 - Renamed the plugin (`.claude-plugin/plugin.json` and the marketplace entry in

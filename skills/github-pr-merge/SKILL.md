@@ -113,6 +113,11 @@ starting the next one. Wait for the user to say to proceed.
 
 ## Reviewing and merging a parallel-batch sub-agent's PR into the integration branch
 
+This checklist is the parallel-batch-specific instance of a general rule stated in
+`github-issue-workflow`'s "Closing out an issue" section: never relay a delegate's
+self-report as verified fact without having verified it yourself. Keep the two in
+sync if either one changes.
+
 This is the one merge an agent (the batch orchestrator) may perform without the user
 — because the wrapper's base-branch check makes it structurally impossible for this
 path to reach `main`.

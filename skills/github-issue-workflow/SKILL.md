@@ -95,6 +95,19 @@ section and confirm it passes.** If something fails, fix the underlying work —
 never the validation command — and re-run. Only open the PR once the checklist is
 fully checked and validation passes.
 
+**If any part of this issue's work was delegated to a subagent — a single
+general-purpose subagent working the whole issue solo included, not just a
+parallel batch — its self-report is a claim, not verification.** Before treating
+the issue as done, and before summarizing results to the user as fact,
+independently re-run the issue's Validation commands yourself against the actual
+branch/PR state, and check the diff against the issue's Owns/file-scope. Do this
+even when the subagent's own report already claims the commands passed — a report
+of a check is not the check. This holds regardless of batch size;
+`github-pr-merge`'s parallel-batch review checklist is the fuller version of the
+same rule for that specific structure, but the underlying requirement is the same
+one, always: never relay a delegate's self-report as verified fact without having
+verified it yourself.
+
 **The checklist is never fully checked until its `documentation-sync` pass item is
 checked too.** `github-issue-filing`'s `resources/gh-issue.md` template carries a
 standing Definition-of-Done line and checklist item for this — don't treat "load
