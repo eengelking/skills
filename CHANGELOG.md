@@ -10,6 +10,16 @@ once it starts cutting releases.
 
 ### Added
 
+- `github-issue-workflow` gained a "Starting an issue" section covering the
+  sequence between "user says begin" and the first file edit: enter plan
+  mode, research the issue (including any referenced `docs/SPEC.md`
+  section), finalize the plan, then exit plan mode and start work without
+  waiting for human approval — a deliberate, scoped exception to Claude
+  Code's normal plan-mode gate — and create a task list (TaskCreate) covering
+  every task including planned delegation before touching any file, kept
+  current (TaskUpdate) for the entire duration of the work, not just at
+  kickoff.
+
 - `github-issue-workflow`'s "Closing out an issue" section now requires
   independently re-running an issue's Validation commands and checking the
   diff against its file scope whenever any part of the work was delegated to

@@ -1,6 +1,6 @@
 ---
 name: github-issue-workflow
-description: Governs the lifecycle of a unit of tracked work — a GitHub issue that already exists. Precondition — about to start, resume, or close out work tracked as a GitHub issue. Postcondition — on start, the issue is confirmed to be the one the user authorized and its Requirements are read; on close, its checklist is fully checked off and its Validation section passes before the closing PR is opened. Covers the one-issue-at-a-time gate, the generalized parallel-batch pattern, parallel-batch file scoping, the no-forks-in-a-single-worktree rule, and the blanket rule against delegating any step — bounded review/merge or otherwise, including read-only research — via a fork (use a fresh non-fork sub-agent instead), and updating the issue body when it turns out to be wrong. Load this before starting, resuming, or closing any GitHub-issue-tracked work, or before deciding whether the next issue is safe to start. For creating the issue in the first place, see `github-issue-filing`.
+description: Governs the lifecycle of a unit of tracked work — a GitHub issue that already exists. Precondition — about to start, resume, or close out work tracked as a GitHub issue. Postcondition — on start, the issue is confirmed to be the one the user authorized, its Requirements are read via a plan-mode research pass, and a task list covering the whole issue (including any planned delegation) exists before the first file edit and stays current throughout; on close, its checklist is fully checked off and its Validation section passes before the closing PR is opened. Covers the one-issue-at-a-time gate, the generalized parallel-batch pattern, parallel-batch file scoping, the starting-an-issue sequence (plan mode, research, the deliberate exit-without-approval exception, and mandatory ongoing TaskCreate/TaskUpdate tracking), the no-forks-in-a-single-worktree rule, and the blanket rule against delegating any step — bounded review/merge or otherwise, including read-only research — via a fork (use a fresh non-fork sub-agent instead), and updating the issue body when it turns out to be wrong. Load this before starting, resuming, or closing any GitHub-issue-tracked work, or before deciding whether the next issue is safe to start. For creating the issue in the first place, see `github-issue-filing`.
 ---
 
 # Working a GitHub issue
@@ -35,6 +35,41 @@ integration-branch structure applies:
 - Load `git-branching` for the integration-branch structure this requires and
   `github-pr-merge` for how those branches get merged and the shared docs get
   consolidated.
+
+## Starting an issue
+
+This is the sequence between "user says begin" and the first file edit — every
+time an agent is told to start an issue (e.g. "please review issue N and begin
+work"), whether that's a fresh agent picking up its first task or this skill's
+`Sequencing` gate clearing the next one:
+
+1. **Enter plan mode.**
+2. **Review the issue and research it** — the issue body, plus whatever else
+   is needed to actually understand the work (referenced code, a
+   `docs/SPEC.md` section, prior related issues/PRs). This is the same
+   research this skill already requires under "While working an issue" below
+   (reading a referenced `docs/SPEC.md` section before starting); doing it in
+   plan mode is what that requirement looks like at kickoff, not a separate
+   pass.
+3. **Finalize the plan** based on that research.
+4. **Exit plan mode and start work without waiting for human approval of the
+   plan.** This is a deliberate, scoped exception to Claude Code's normal
+   plan-mode gate, not an oversight — a project that wants this workflow is
+   choosing to trade the human-approval pause for unattended throughput on
+   already-authorized issue work. Don't reintroduce an approval pause here on
+   the theory that one was missed; if a project wants the normal gate back,
+   that's a decision for its own CLAUDE.md to make explicitly.
+5. **Before touching any file, create a task list** (e.g. via TaskCreate)
+   covering every task needed to complete the issue, including tasks for any
+   sub-agents/delegation the plan expects to spawn along the way. This is
+   unconditional — there is no case where issue work proceeds before a task
+   list exists, even for a small issue where the list is short.
+6. **Keep the task list current for the entire duration of the work** (e.g.
+   via TaskUpdate) — every time a task is discovered, dropped, or changes
+   status, not just at kickoff or at the end. The list is meant to answer
+   "what's this agent doing and what's left" at any point someone looks,
+   including while a sub-agent it spawned is running; letting it go stale
+   defeats that.
 
 ## While working an issue
 
