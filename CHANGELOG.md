@@ -8,6 +8,21 @@ once it starts cutting releases.
 
 ## [Unreleased]
 
+### Changed
+
+- Renamed the marketplace (`.claude-plugin/marketplace.json`'s `name` field)
+  from `skills-marketplace` to `eengelking-marketplace`. `skills-marketplace`
+  is a generic name another plugin author's marketplace could plausibly reuse,
+  the same namespace-collision concern that already prompted renaming the
+  plugin itself from `skills` to `eengelking`. The plugin name and repo are
+  unchanged. README.md's install/update instructions now reference the new
+  marketplace name, and gained a migration section for anyone who installed
+  before this rename: the old `skills-marketplace` registration is orphaned
+  once this change is pulled, and needs `/plugin marketplace remove
+  skills-marketplace` followed by re-adding and reinstalling under the new
+  name — removing a marketplace uninstalls its plugins, so reinstalling isn't
+  optional.
+
 ### Added
 
 - `github-issue-workflow` gained a "Starting an issue" section covering the
