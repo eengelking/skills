@@ -10,6 +10,18 @@ once it starts cutting releases.
 
 ### Changed
 
+- Synced `.claude/CLAUDE.md` with the canonical standard model
+  (`eengelking/agent`'s `CLAUDE.md`): added a `Starting` row to Issue
+  Management (mandatory TaskCreate/TaskUpdate tracking when starting an
+  issue, with a documented fallback to enabling
+  `CLAUDE_CODE_ENABLE_TODO_TOOLS` when a session doesn't provision task
+  tools by default); added a `Review (pre-PR)` row to Git & GitHub Workflow
+  so `/code-review --fix` runs on the branch before opening the PR rather
+  than after; added a `Remote access` row noting `gh` CLI availability and
+  the SSH-to-HTTPS remote fallback; and added a Working Style bullet on
+  checking `scripts/` for an existing helper before writing a new one. This
+  repo's own additions (the extra `Skills` table columns, the
+  `.claude-plugin/plugin.json` version-field callout) were left in place.
 - Renamed the marketplace (`.claude-plugin/marketplace.json`'s `name` field)
   from `skills-marketplace` to `eengelking-marketplace`. `skills-marketplace`
   is a generic name another plugin author's marketplace could plausibly reuse,
