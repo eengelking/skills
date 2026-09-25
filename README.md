@@ -27,7 +27,7 @@ one specific project's paths, tools, or conventions live in that project's own
 
 ```
 /plugin marketplace add eengelking/skills
-/plugin install eengelking@skills-marketplace
+/plugin install eengelking@eengelking-marketplace
 ```
 
 This installs all of the skills above at once.
@@ -47,7 +47,7 @@ gets bumped in the same PR. To pick up a new version after installing via the
 marketplace:
 
 ```
-/plugin marketplace update skills-marketplace
+/plugin marketplace update eengelking-marketplace
 ```
 
 This refreshes the marketplace's metadata from this repo; Claude Code picks up the
@@ -58,6 +58,25 @@ ship as one plugin.
 If you installed manually via symlink instead, there's nothing to run — the
 symlink always points at this repo's current working tree, so a local `git pull`
 here is the update.
+
+### If you installed before the marketplace was renamed
+
+This marketplace was previously registered as `skills-marketplace`; it's now
+`eengelking-marketplace` (same repo, same `eengelking` plugin — only the
+marketplace's own name changed, to avoid colliding with another marketplace
+someone else might register under the generic name `skills-marketplace`). If
+you installed before this rename, `/plugin marketplace update skills-marketplace`
+will no longer resolve — that name is orphaned once you pull this change. Remove
+the old registration and re-add under the new name instead:
+
+```
+/plugin marketplace remove skills-marketplace
+/plugin marketplace add eengelking/skills
+/plugin install eengelking@eengelking-marketplace
+```
+
+Removing a marketplace uninstalls its plugins, so the third command is required,
+not optional — re-adding the marketplace alone won't bring the plugin back.
 
 ## License
 
