@@ -11,6 +11,16 @@ once it starts cutting releases.
 ### Changed
 
 - Synced `.claude/CLAUDE.md` with the canonical standard model
+  (`eengelking/agent`'s `CLAUDE.md`, PR #14, "Bound the pre-PR code-review
+  cycle to one round"): added a `Do Not` bullet against re-invoking
+  `/code-review` a second time on the same diff "to confirm" a fix, since the
+  review skill's finder/verifier fan-out isn't guaranteed to converge on a
+  repeat run; and replaced the `Review (pre-PR)` row in Git & GitHub Workflow
+  so it applies only to branches that change code (a docs/prose-only diff has
+  nothing for `/code-review` to check), runs `/code-review` exactly once
+  before opening the PR, and verifies fixes via the project's own test/lint
+  suite rather than a second review round.
+- Synced `.claude/CLAUDE.md` with the canonical standard model
   (`eengelking/agent`'s `CLAUDE.md`): added a `Starting` row to Issue
   Management (mandatory TaskCreate/TaskUpdate tracking when starting an
   issue, with a documented fallback to enabling
