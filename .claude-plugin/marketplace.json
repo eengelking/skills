@@ -1,5 +1,6 @@
 {
   "name": "eengelking-marketplace",
+  "description": "Ed Engelking's Claude Code marketplace: shared skills for the git, PR and issue lifecycle and for documentation, plus plugins that live in their own repos, such as the Podium session reporter.",
   "owner": {
     "name": "Ed Engelking",
     "url": "https://github.com/eengelking"

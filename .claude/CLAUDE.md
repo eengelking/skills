@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 
 This repo holds Claude Code skills meant to be reusable across multiple projects: the
 procedural *how* behind git/PR/issue workflow, git safety, documentation sync, prose
-voice, and generic dev tooling. It ships as a single Claude Code plugin (`skills`,
+voice, and generic dev tooling. It ships as a single Claude Code plugin (`eengelking`,
 versioned via `.claude-plugin/plugin.json`) that other projects install via the plugin
 marketplace, or symlink from individually for local development. Skills tied to one
 specific project's paths, tools, or conventions belong in that project's own

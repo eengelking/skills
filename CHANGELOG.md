@@ -15,6 +15,9 @@ once it starts cutting releases.
   Claude Code clone over SSH, so installing failed with "Permission denied (publickey)" for
   anyone without a GitHub SSH key. Checked by adding the marketplace and installing the
   plugin with a clean config directory.
+- `skills/documentation-sync/SKILL.md` and `.claude/CLAUDE.md` called the plugin
+  `skills`; its name has been `eengelking` since the rename. The `SKILL.md` edit
+  bumps the plugin to 1.10.1.
 
 ### Added
 
@@ -26,6 +29,10 @@ once it starts cutting releases.
 
 ### Changed
 
+- Added a description to the marketplace (`.claude-plugin/marketplace.json`),
+  which `claude plugin validate` had been warning about. README.md's row for
+  `podium-reporter` now says to enter the server's auth token with
+  `/plugin configure` and links the Podium user guide.
 - Synced `.claude/CLAUDE.md` with the canonical standard model
   (`eengelking/agent`'s `CLAUDE.md`, PR #14, "Bound the pre-PR code-review
   cycle to one round"): added a `Do Not` bullet against re-invoking

@@ -159,7 +159,7 @@ adopted, still lives in that project's own status doc or its own
 If the change being committed edits a `SKILL.md` or a skill's `resources/` in
 this repo, that's a doc-sync case with one extra step: bump the `version` field
 in `.claude-plugin/plugin.json`. This repo ships all its skills as a single
-plugin (`skills`), so there's no per-skill version — one version field covers
+plugin (`eengelking`), so there's no per-skill version — one version field covers
 every skill, and it's what a `/plugin marketplace update` actually checks to
 decide whether there's anything new to pull. Skipping the bump means the fix or
 addition sits in `main` but nobody who already installed the plugin gets it.
