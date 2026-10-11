@@ -112,13 +112,45 @@ with no actual work to do.
    intensifiers ("robust," "leverage," "delve," "seamless"), the "it's not just X,
    it's Y" construction, or a reflexive rule-of-three list. Match the register of
    the rest of the project's issues rather than defaulting to marketing tone.
-4. File it:
+4. If the finding came with images or video (see "Attach screenshots" below), add
+   one `--attach` flag per file to the command in the next step.
+5. File it:
    ```bash
    gh issue create --title "<short title>" --body-file <rendered-file> \
-     --label <label>[,<label>...]
+     --label <label>[,<label>...] \
+     --attach './<file>#<alt text>'
    ```
-5. If this came from `docs/ISSUES.md`, delete the entry (or the now-filed portion
+6. If this came from `docs/ISSUES.md`, delete the entry (or the now-filed portion
    of it) from the file.
+
+## Attach screenshots
+
+When the user shares an image while describing the problem — a pasted screenshot,
+or a path to one — and that problem becomes an issue, attach the image to the
+issue. A screenshot is often the clearest statement of the defect, and a reader
+opening the issue later can't see the conversation it came from.
+
+- `gh issue create` and `gh issue comment` both take `--attach <file>#<alt text>`
+  for an image or video (up to 50 files per command; repeat the flag for more).
+  Write alt text that says what the image shows, e.g.
+  `--attach './login.png#Login form showing a 500 error'`. Without it the filename
+  is the alt text, and video can't have any.
+- Without a reference in the body, attachments are appended at the end. To place one
+  inline (say, under Context), write `![alt](./login.png)` in the body file where it
+  belongs; `gh` rewrites that reference to the uploaded asset.
+- A pasted image is reachable as a file on disk, so don't ask the user to
+  re-upload it. Use the path the harness gives you for it.
+- Use `gh issue comment <n> --attach ...` when the screenshot belongs on an
+  existing issue found in the duplicate check.
+- If some uploads fail, `gh` still creates the issue and prints its URL, but exits
+  non-zero. Read the output before retrying — re-running `gh issue create` would
+  file a duplicate. Add the missing files with `gh issue comment`.
+- This needs a recent `gh` (2.102.0 has it). If `--attach` isn't an option on the
+  installed version, say so and tell the user the screenshot has to be added by
+  hand; don't drop it silently.
+- Issues are often public. Look at the image before uploading it, and if it shows
+  tokens, personal data, or anything else that shouldn't be published, stop and ask
+  rather than uploading it. See `git-safety` for the same habit applied to commits.
 
 ## Committing the filing pass
 
