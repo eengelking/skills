@@ -8,6 +8,14 @@ once it starts cutting releases.
 
 ## [Unreleased]
 
+### Fixed
+
+- The `podium-reporter` entry in `.claude-plugin/marketplace.json` now uses the full
+  `https://github.com/eengelking/podium.git` URL. The `eengelking/podium` shorthand made
+  Claude Code clone over SSH, so installing failed with "Permission denied (publickey)" for
+  anyone without a GitHub SSH key. Checked by adding the marketplace and installing the
+  plugin with a clean config directory.
+
 ### Added
 
 - Listed `podium-reporter` in `.claude-plugin/marketplace.json`, pointing at the
