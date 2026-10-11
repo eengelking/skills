@@ -15,7 +15,7 @@
       "description": "Reports each Claude Code session (model, effort, plan, agents, context, cost, git, failures) to a local Podium fleet console.",
       "source": {
         "source": "git-subdir",
-        "url": "eengelking/podium",
+        "url": "https://github.com/eengelking/podium.git",
         "path": "mod/podium-reporter"
       }
     }
