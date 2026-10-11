@@ -28,7 +28,7 @@ The `eengelking-marketplace` lists plugins that live in their own repos, so one
 
 | Plugin | Repo | Description |
 |---|---|---|
-| `podium-reporter` | [`eengelking/podium`](https://github.com/eengelking/podium) | A mod that reports each Claude Code session to a local Podium fleet console. Install it with `/plugin install podium-reporter@eengelking-marketplace`, then run the Podium server from that repo. |
+| `podium-reporter` | [`eengelking/podium`](https://github.com/eengelking/podium) | A mod that reports each Claude Code session to a local Podium fleet console. Install it with `/plugin install podium-reporter@eengelking-marketplace`, run the Podium server from that repo, and enter the server's auth token with `/plugin configure podium-reporter@eengelking-marketplace`. Setup steps are in the [Podium user guide](https://github.com/eengelking/podium/blob/main/docs/USER_GUIDE.md). |
 
 ## Installing
 
