@@ -7,7 +7,9 @@
 
 <!-- Where this came from: a docs/ISSUES.md entry, a user conversation, a UAT pass,
      an audit finding. Link or quote the originating discussion if one exists, so
-     a reader with zero session context can trace why this exists. -->
+     a reader with zero session context can trace why this exists. If the user
+     shared a screenshot, reference it here as ![what it shows](./file.png) and
+     pass the same file to `gh issue create --attach`. -->
 
 ## Requirements
 

@@ -21,6 +21,11 @@ once it starts cutting releases.
 
 ### Added
 
+- `github-issue-filing` now covers `gh issue create --attach` and
+  `gh issue comment --attach`: a screenshot or video the user shared while describing
+  a problem gets attached to the issue, with alt text, a note on inline placement, what
+  to do when only some uploads succeed, and a check for sensitive content before
+  upload. `resources/gh-issue.md` points to it. Bumps the plugin to 1.11.0.
 - Listed `podium-reporter` in `.claude-plugin/marketplace.json`, pointing at the
   `mod/podium-reporter` folder of `eengelking/podium` (a `git-subdir` source). The
   marketplace can now carry plugins that live in other repos; the `eengelking` skills
