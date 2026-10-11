@@ -8,6 +8,14 @@ once it starts cutting releases.
 
 ## [Unreleased]
 
+### Added
+
+- Listed `podium-reporter` in `.claude-plugin/marketplace.json`, pointing at the
+  `mod/podium-reporter` folder of `eengelking/podium` (a `git-subdir` source). The
+  marketplace can now carry plugins that live in other repos; the `eengelking` skills
+  plugin is unchanged, so its version is not bumped. README.md has a short section
+  listing plugins that live elsewhere.
+
 ### Changed
 
 - Synced `.claude/CLAUDE.md` with the canonical standard model

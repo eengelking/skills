@@ -21,6 +21,15 @@ one specific project's paths, tools, or conventions live in that project's own
 | [`git-safety`](skills/git-safety) | Reference for dangerous git commands that need explicit per-use approval (force-push, hook-skipping flags, signing bypass, hard resets, branch/tag deletion, and more) and the practical routine for catching secrets before they're committed. |
 | [`retrospective`](skills/retrospective) | Running a retrospective on finished work — went-well/went-wrong, root-causing every went-wrong item, sorting findings into skill-gap/model-behavior/tool-bug/fine, and implementing any real skill-gap fix through the host project's own branch/PR/merge workflow. |
 
+## Other plugins in this marketplace
+
+The `eengelking-marketplace` lists plugins that live in their own repos, so one
+`/plugin marketplace add eengelking/skills` gets you all of them.
+
+| Plugin | Repo | Description |
+|---|---|---|
+| `podium-reporter` | [`eengelking/podium`](https://github.com/eengelking/podium) | A mod that reports each Claude Code session to a local Podium fleet console. Install it with `/plugin install podium-reporter@eengelking-marketplace`, then run the Podium server from that repo. |
+
 ## Installing
 
 ### Via the Claude Code plugin marketplace
