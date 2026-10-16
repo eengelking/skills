@@ -11,6 +11,20 @@ except the one narrow, technically-fenced exception below. This skill is the *ho
 if the repo has its own CLAUDE.md or contributing doc explaining *why*, read that
 too.
 
+## Development-branch workflow (default branch is `development`)
+
+Check which workflow the repo uses:
+
+```bash
+gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
+```
+
+`development` means feature PRs target `development` (squash-merged), `main` only
+moves through a `development` → `main` release PR (regular merge commit, never
+squashed), and agents merge into neither branch. Everything below that says `main`
+describes the standard workflow; for this one, read `resources/development-branch.md`
+first. Anything else printed means this file applies as written.
+
 ## Opening a PR
 
 ```bash
@@ -74,7 +88,7 @@ resources/scripts/gh_merge_guard.sh <pr-number-or-url> [gh pr merge flags]
 Copy `resources/scripts/gh_merge_guard.sh` into this repo (e.g. `scripts/`) and wire
 it into your permission config's deny rule for `gh pr merge`. The wrapper looks up
 the PR's actual base branch via the GitHub API and refuses (exit 1, no merge
-attempted) if that base is `main`. Never try to route around it — raw `gh api`
+attempted) if that base is `main` or `development`. Never try to route around it — raw `gh api`
 PR-merge calls, editing the permission config, etc. If work genuinely seems to need
 a `main` merge, that's the point to stop and ask the user, not to find another path
 to the same merge.
