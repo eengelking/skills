@@ -10,6 +10,26 @@ tagged after the fact, from the history of that file.
 
 ## [Unreleased]
 
+## [1.12.0] - 2026-10-16
+
+### Added
+
+- A development-branch workflow for `git-branching`, `github-pr-merge`,
+  `github-issue-workflow`, and `github-release`, each with a new
+  `resources/development-branch.md`. It applies when the repo's GitHub default branch is
+  `development`; any other default branch keeps the existing `main` workflow unchanged.
+  Feature PRs squash-merge into `development` with no version bump. A release is a
+  release-prep PR (version bump and CHANGELOG retitle) into `development`, then a
+  `development` → `main` PR merged with a regular merge commit, which acts as the
+  release-candidate gate. Hotfixes branch from `main` and are cherry-picked back into
+  `development`. (#37)
+
+### Changed
+
+- The `git-branching` pre-commit hook now also refuses commits on `development`, and
+  `github-pr-merge`'s `gh_merge_guard.sh` also refuses PRs whose base is `development`.
+  Neither changes behavior for a repo with no `development` branch. (#37)
+
 ## [1.11.0] - 2026-10-11
 
 ### Added

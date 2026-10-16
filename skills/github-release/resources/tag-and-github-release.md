@@ -40,3 +40,8 @@ it's what determines the commit you're tagging: `git pull` after the merge
 gives you that squash commit directly, whichever merge path produced it (the
 user merging in the GitHub UI, or the one pre-authorized autonomous path a
 repo's own dependabot-style skill might define).
+
+In the development-branch workflow (default branch `development`), the release PR
+into `main` is a regular merge commit instead, never squashed. After `git pull` on
+`main`, tag that merge commit. A hotfix PR into `main` is tagged the same way, from
+`main` after it merges. See `development-branch.md` in this folder.

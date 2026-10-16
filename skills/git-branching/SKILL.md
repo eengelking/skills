@@ -1,6 +1,6 @@
 ---
 name: git-branching
-description: Covers the front half of the git lifecycle — getting from no branch to the correct one. Precondition — about to edit any tracked file in this repo, whether that's a GitHub-issue-tracked unit of work, a parallel batch of issues, or an informal fix with no tracking issue at all; `main`'s state is not yet confirmed current. There is no category of work exempt from this — "it doesn't need a tracking issue" is not "it doesn't need a branch." Postcondition — on a correctly-named branch forked from the correct parent: sequential/informal work off `main`, a parallel batch's integration branch off `main`, and each sub-agent's branch off that integration branch (never off `main` directly). Mandates `isolation: "worktree"` for every parallel-batch sub-agent spawn, covers what a sub-agent running in that worktree needs to know about keeping its shell commands simple before the harness's isolation guard refuses one, and notes that a worktree outlives its branch's merge and needs its own cleanup (see github-pr-merge). Load this before the first Edit/Write of any session on this repo — including before writing a plan-mode implementation once approved — or before spawning a worktree-isolated sub-agent. For PR creation, merge permissions, and releases once the work is done, see the `github-pr-merge` skill instead.
+description: Covers the front half of the git lifecycle — getting from no branch to the correct one. Precondition — about to edit any tracked file in this repo, whether that's a GitHub-issue-tracked unit of work, a parallel batch of issues, or an informal fix with no tracking issue at all; `main`'s state is not yet confirmed current. There is no category of work exempt from this — "it doesn't need a tracking issue" is not "it doesn't need a branch." Postcondition — on a correctly-named branch forked from the correct parent: sequential/informal work off `main`, a parallel batch's integration branch off `main`, and each sub-agent's branch off that integration branch (never off `main` directly). Mandates `isolation: "worktree"` for every parallel-batch sub-agent spawn, covers what a sub-agent running in that worktree needs to know about keeping its shell commands simple before the harness's isolation guard refuses one, and notes that a worktree outlives its branch's merge and needs its own cleanup (see github-pr-merge). If the repo's GitHub default branch is `development`, the parent is `development` instead of `main` and hotfixes fork from `main` — see `resources/development-branch.md`. Load this before the first Edit/Write of any session on this repo — including before writing a plan-mode implementation once approved — or before spawning a worktree-isolated sub-agent. For PR creation, merge permissions, and releases once the work is done, see the `github-pr-merge` skill instead.
 ---
 
 # Starting work: branches in this repo
@@ -29,8 +29,9 @@ recently in the same session.
 ### Technical backstop: the pre-commit hook
 
 Don't rely on discipline alone. This skill ships a pre-commit hook
-(`resources/scripts/hooks/pre-commit`) that refuses any commit made while `main` is
-checked out. Install it once per clone:
+(`resources/scripts/hooks/pre-commit`) that refuses any commit made while `main` (or
+`development`, in the development-branch workflow below) is checked out. Install it
+once per clone:
 
 1. Copy `resources/scripts/hooks/pre-commit` into this repo at `scripts/hooks/pre-commit`
    (create the directory if it doesn't exist) and make it executable
@@ -89,6 +90,21 @@ heredocs, which hit this guard every time. **The orchestrator must state both
 of these — the worktree requirement and the plain-command constraint —
 directly in the sub-agent's spawn prompt**, not let it learn either one from
 an error.
+
+## Development-branch workflow (default branch is `development`)
+
+Some projects merge feature work into a long-lived `development` branch and only move
+`main` on a release. Check which workflow applies:
+
+```bash
+gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
+```
+
+`development` means this workflow; anything else means everything above applies
+unchanged. In this workflow, "branch off `main`" above becomes "branch off
+`development`" (hotfixes are the one exception, and fork from `main`), and neither
+`main` nor `development` is ever edited directly. Branch names, parents, and the
+hotfix backport are in `resources/development-branch.md`.
 
 ## While working
 

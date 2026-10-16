@@ -8,9 +8,9 @@ one specific project's paths, tools, or conventions live in that project's own
 
 | Skill | Description |
 |---|---|
-| [`git-branching`](skills/git-branching) | Getting from no branch to the correct one — branch naming, the two-tier integration-branch model for parallel work, and a pre-commit hook backstopping the branch-first rule. |
+| [`git-branching`](skills/git-branching) | Getting from no branch to the correct one — branch naming, the two-tier integration-branch model for parallel work, and a pre-commit hook backstopping the branch-first rule. Also covers repos that merge to a `development` branch instead of `main`. |
 | [`github-pr-merge`](skills/github-pr-merge) | Opening a PR, the merge/tag actions an agent may perform, and post-merge branch cleanup. |
-| [`github-release`](skills/github-release) | Cutting a release once a PR has merged — CHANGELOG/SemVer policy, build verification, version bumps, artifact publishing, and the git tag + GitHub Release. |
+| [`github-release`](skills/github-release) | Cutting a release once a PR has merged — CHANGELOG/SemVer policy, build verification, version bumps, artifact publishing, and the git tag + GitHub Release. Includes the `development` → `main` release and hotfix flow for repos that use a `development` branch. |
 | [`github-issue-filing`](skills/github-issue-filing) | Converts a staging inbox of informally-noted findings into properly labeled GitHub issues. |
 | [`github-issue-workflow`](skills/github-issue-workflow) | Governs the lifecycle of a GitHub-issue-tracked unit of work, from starting it to closing it out. |
 | [`documentation-sync`](skills/documentation-sync) | Keeps a change's accompanying docs correct in the same commit — a generic framework for deciding what doc owns what, including SPEC.md-as-source-of-truth; a project's own doc-ownership table lives in that project's own `.claude/skills/`. |
