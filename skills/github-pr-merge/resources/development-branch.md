@@ -1,12 +1,12 @@
-# PRs and merges when the default branch is `development`
+# PRs and merges when a `development` branch exists
 
-Applies only when the repo's GitHub default branch is `development`:
+Applies only when `development` exists on the remote:
 
 ```bash
-gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
+git ls-remote --exit-code --heads origin development
 ```
 
-If that prints anything else, ignore this file; `SKILL.md` as written is the whole
+If that exits non-zero, ignore this file; `SKILL.md` as written is the whole
 story. Branch names and where each one forks from are in `git-branching`'s
 `resources/development-branch.md`; the release itself is in `github-release`'s.
 
@@ -22,16 +22,18 @@ branch is unchanged.
 
 | PR | From → into | Merge method (user merges) | Body must say |
 |---|---|---|---|
-| Feature or informal fix | `issue/*`, `fix/*` → `development` | squash | to be squash-merged; `Closes #N` if it resolves an issue |
-| Batch final PR | `batch/*` → `development` | squash | to be squash-merged; `Closes #N` for every issue in the round |
+| Feature or informal fix | `issue/*`, `fix/*` → `development` | squash | to be squash-merged; `Refs #N` if it relates to an issue |
+| Batch final PR | `batch/*` → `development` | squash | to be squash-merged; `Refs #N` for every issue in the round |
 | Release prep | `release-prep/<version>` → `development` | squash | to be squash-merged; the version being prepared |
-| Release | `development` → `main` | regular merge commit | **not** to be squashed; the version and its CHANGELOG section |
-| Hotfix | `hotfix/*` → `main` | user's choice, say which (squash or merge commit both work: the backport is cherry-picked from the branch's commits, and identical changes merge cleanly later) | the version and what it fixes |
-| Hotfix backport | `hotfix/*-backport` → `development` | squash | to be squash-merged; `Closes #N` for the hotfix's issue |
+| Release | `development` → `main` | regular merge commit | **not** to be squashed; the version, its CHANGELOG section, and `Closes #N` for every issue it ships |
+| Hotfix | `hotfix/*` → `main` | user's choice, say which (squash or merge commit both work: the backport is cherry-picked from the branch's commits, and identical changes merge cleanly later) | the version and what it fixes; `Closes #N` for the hotfix's issue |
+| Hotfix backport | `hotfix/*-backport` → `development` | squash | to be squash-merged; `Refs #N` for the hotfix's issue |
 
-Because `development` is the default branch, `Closes #N` on a PR into it closes the
-issue on merge. A sub-agent's PR into an integration branch still must not claim
-`Closes #N`, same as before.
+`Closes #N` only fires for a PR into the default branch, and the default branch stays
+`main`, so it does nothing on a PR into `development`. Feature and batch PRs use
+`Refs #N` instead, and the release PR (`development` → `main`) carries `Closes #N` for
+every issue it ships, so issues close when the release merges. A sub-agent's PR into an
+integration branch must not claim `Closes #N` either, same as before.
 
 ## Feature PRs do not bump the version
 

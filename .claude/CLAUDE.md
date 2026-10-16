@@ -40,25 +40,28 @@ The operator uses shorthand in place of typing a full request out. Case-insensit
 
 ## Branching Model
 
-Two workflows exist. The repo's GitHub default branch picks which one applies:
+Two workflows exist. Whether a `development` branch exists on the remote picks which one applies:
 
 ```bash
-gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
+git ls-remote --exit-code --heads origin development
 ```
 
-- **Standard workflow** (default branch is `main`, or anything other than `development`): PRs merge into `main`, and each merge may be a release.
-- **Development-branch workflow** (default branch is `development`): a project opts in by making `development` its default branch.
+Exit 0 means the development-branch workflow; any other exit means the standard workflow. Creating `development` is the opt-in, and the GitHub default branch stays `main` so a plain clone gets released code.
+
+- **Standard workflow** (no `development` branch): PRs merge into `main`, and each merge may be a release.
+- **Development-branch workflow** (`development` exists):
   - `development` holds unreleased work and may be broken at any given time. Feature PRs target it and are squash-merged.
   - `main` only moves on a release. A release is a PR from `development` to `main`, merged with a regular merge commit, never squashed (squashing makes the branches diverge). That PR is the release-candidate gate: it is valid only if all tests pass, with no breaking tests, conditions, or regressions.
   - The version bump happens in the release PR, not in feature PRs. Feature PRs only add to `CHANGELOG.md`'s `[Unreleased]` section. The bump level comes from what accumulated there, per the SemVer rules in `github-release`.
+  - `Closes #N` only fires for a PR into the default branch (`main`), so it does not close an issue when a feature PR merges into `development`. Feature PRs use `Refs #N` instead, and the release PR lists `Closes #N` for every issue it ships.
   - Hotfixes branch from `main`, go to `main` by PR, and bump the patch version. The fix is then cherry-picked into `development` by a follow-up PR, when the user instructs it, so the branches don't drift.
   - The integration branch keeps its meaning: the throwaway branch an orchestrator creates for a parallel batch. It is not `development`. Here it is created off `development` and its final PR targets `development`.
 
-Below, "the default branch" means whichever of the two the command returns. Procedure lives in `git-branching`, `github-pr-merge`, `github-issue-workflow`, and `github-release`.
+Below, "the base branch" means `development` if it exists and `main` otherwise. Procedure lives in `git-branching`, `github-pr-merge`, `github-issue-workflow`, and `github-release`.
 
 ## Always Branch First
 
-Before the first `Edit` or `Write` of *any* change to this repo — check the current branch. If it's `main` or `development`, create or switch to a working branch before touching a single file. Fork from the default branch (from `main` for hotfixes). This holds regardless of size ("just a typo fix"), formality ("no issue for this, just drafting"), or how the request was phrased ("draft a revised README" is still a change once you start writing it to disk) — the decision to skip a tracking issue and the decision to skip a branch are unrelated, and only the first is ever legitimate. See `git-branching` for the mechanics, including the pre-commit hook that backstops this rule technically rather than relying on memory alone. The hook should block commits on both `main` and `development`.
+Before the first `Edit` or `Write` of *any* change to this repo — check the current branch. If it's `main` or `development`, create or switch to a working branch before touching a single file. Fork from the base branch (from `main` for hotfixes). This holds regardless of size ("just a typo fix"), formality ("no issue for this, just drafting"), or how the request was phrased ("draft a revised README" is still a change once you start writing it to disk) — the decision to skip a tracking issue and the decision to skip a branch are unrelated, and only the first is ever legitimate. See `git-branching` for the mechanics, including the pre-commit hook that backstops this rule technically rather than relying on memory alone. The hook should block commits on both `main` and `development`.
 
 ## Skills
 
@@ -97,7 +100,7 @@ Order of operations for any tracked change. The policy is the invariant that hol
 |---|---|---|
 | Start | Branch first, synced from current `main` (standard) or `development` (development-branch workflow). | `git-branching` |
 | Review (pre-PR) | Applies only when the branch changes code (logic, scripts, config with behavioral effect) — a docs/prose-only diff (`CLAUDE.md`, `CHANGELOG.md`, `README.md`, comments) has no code for `/code-review` to check and skips this row entirely; a mixed branch still runs it, scoped to the code files. When it applies, run `/code-review` on the branch **exactly once** before opening the PR, then apply its findings with `--fix` (or explicitly defer/note larger, out-of-scope suggestions with reasoning) — never loop back into a second automated round to "confirm" the fixes. Verification of the fixed code is the orchestrator's own job, done directly against the project's real test/lint commands (`development-commands`), not by re-invoking the skill. If that verification passes, move on to the PR; if it fails, stop and ask the user rather than re-running review. This caps the process at one review round plus one orchestrator-run verification pass — see "Do Not" for why a second round is off the table. Reserve post-PR `--comment`/`ultra` review for a genuinely separate pass (e.g. a deeper multi-agent review, or a check the user explicitly wants visible as PR comments), never as a stand-in for pre-PR confirmation. | `code-review`, `development-commands` |
-| Develop → PR | The PR targets the default branch; in the development-branch workflow, `plugin.json`/manifest version bumps do not happen here. Changes land via PR; the user reviews and merges. Once a change — issue-tracked or informal — is complete, has been through pre-PR review above, and passes its relevant checks, commit, push, and open the PR without waiting for a separate go-ahead; that's normal completion of the work, not a separate action to confirm. Opening a PR is still a stopping point, not a launchpad — it doesn't authorize starting the next unit of work unprompted, and merging remains the user's call, always. | `github-pr-merge` |
+| Develop → PR | The PR targets the base branch; in the development-branch workflow, `plugin.json`/manifest version bumps do not happen here. Changes land via PR; the user reviews and merges. Once a change — issue-tracked or informal — is complete, has been through pre-PR review above, and passes its relevant checks, commit, push, and open the PR without waiting for a separate go-ahead; that's normal completion of the work, not a separate action to confirm. Opening a PR is still a stopping point, not a launchpad — it doesn't authorize starting the next unit of work unprompted, and merging remains the user's call, always. | `github-pr-merge` |
 | Merge & cleanup | A branch is deleted only after its merge is confirmed, not assumed. Feature PRs into `development` are squash-merged. | `github-pr-merge` |
 | Release (if applicable) | A deliberate step after a PR merges, never an automatic side effect of merging — ask if it's unclear whether this project does releases at all. In the development-branch workflow, a release is the `development` to `main` PR described in "Branching Model", a step the user triggers, never a side effect of merging feature work. | `github-release` |
 | Hotfix (development-branch workflow only) | Branch from `main`, PR to `main`, bump the patch version, then cherry-pick into `development` by follow-up PR when the user instructs it. | `github-release`, `git-branching` |
@@ -110,7 +113,7 @@ Order of operations for any tracked change. The policy is the invariant that hol
 | Phase | Policy | Skill |
 |---|---|---|
 | Filing | Group related reports under one issue by root cause rather than one per symptom — but split back out when a report actually bundles more than one distinct Definition of Done. | `github-issue-filing` |
-| Working | Work one open issue at a time by default — closing one, even by a merged PR, doesn't authorize starting the next unprompted — unless the user has deliberately scoped a parallel batch, in which case an orchestrator may run multiple issues at once via sub-agents (the batch's final PR targets the default branch). Each sub-agent stays scoped to its own issue's files; never let one touch a shared, single-section file (e.g. `CHANGELOG.md`'s `[Unreleased]` section, this file's own status content, `.claude-plugin/plugin.json`'s version field) — independent agents editing the same lines is a guaranteed conflict. | `github-issue-workflow` |
+| Working | Work one open issue at a time by default — closing one, even by a merged PR, doesn't authorize starting the next unprompted — unless the user has deliberately scoped a parallel batch, in which case an orchestrator may run multiple issues at once via sub-agents (the batch's final PR targets the base branch). Each sub-agent stays scoped to its own issue's files; never let one touch a shared, single-section file (e.g. `CHANGELOG.md`'s `[Unreleased]` section, this file's own status content, `.claude-plugin/plugin.json`'s version field) — independent agents editing the same lines is a guaranteed conflict. | `github-issue-workflow` |
 | Starting | When told to start an issue (e.g. "review issue N and begin work"), maintain a live task list via TaskCreate/TaskUpdate for the entire duration of the work — every step, including any sub-agents to be spawned — with no exceptions. This is always visible progress tracking, not optional bookkeeping. If TaskCreate/TaskUpdate aren't available in the session (they're off by default on some models), don't fall back to informal status updates — ask the user for permission to add `CLAUDE_CODE_ENABLE_TODO_TOOLS: "1"` to `~/.claude/settings.json`'s `env` block, make the edit once approved, and confirm the tools are now available before proceeding. | `github-issue-workflow` |
 
 ## Delegation & Sub-agents

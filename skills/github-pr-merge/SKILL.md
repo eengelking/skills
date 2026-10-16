@@ -11,19 +11,19 @@ except the one narrow, technically-fenced exception below. This skill is the *ho
 if the repo has its own CLAUDE.md or contributing doc explaining *why*, read that
 too.
 
-## Development-branch workflow (default branch is `development`)
+## Development-branch workflow (a `development` branch exists)
 
 Check which workflow the repo uses:
 
 ```bash
-gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
+git ls-remote --exit-code --heads origin development
 ```
 
-`development` means feature PRs target `development` (squash-merged), `main` only
+Exit 0 means feature PRs target `development` (squash-merged), `main` only
 moves through a `development` → `main` release PR (regular merge commit, never
 squashed), and agents merge into neither branch. Everything below that says `main`
 describes the standard workflow; for this one, read `resources/development-branch.md`
-first. Anything else printed means this file applies as written.
+first. Any other exit means this file applies as written.
 
 ## Opening a PR
 
@@ -40,7 +40,7 @@ step only — it changes nothing about merging, which is always the user's call
 (see below).
 Keep the description accurate as further commits land.
 
-**If this PR resolves a GitHub issue and targets `main`, its body must include
+**If this PR resolves a GitHub issue and targets the default branch (`main`), its body must include
 `Closes #N`** so GitHub closes the issue automatically on merge — no separate
 manual close step. A PR for informal work with no tracking issue (a small doc fix,
 a workflow correction) has nothing to close; don't invent a `Closes #N` for one.

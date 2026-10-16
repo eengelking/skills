@@ -17,19 +17,19 @@ answer to "what do we build, and where does it publish" isn't already
 documented, ask the user rather than guessing — then the repo's own docs are
 the place to record the answer for next time, not this skill.
 
-## Development-branch workflow (default branch is `development`)
+## Development-branch workflow (a `development` branch exists)
 
 Check which workflow the repo uses:
 
 ```bash
-gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
+git ls-remote --exit-code --heads origin development
 ```
 
-`development` means feature PRs merge there with no version bump, and a release is a
+Exit 0 means feature PRs merge there with no version bump, and a release is a
 deliberate `development` → `main` release PR that carries the bump, the CHANGELOG
 retitle, and the release-candidate gate, with hotfixes going to `main` and then
 cherry-picked back. Read `resources/development-branch.md` first; where it conflicts
-with the steps below, it wins. Anything else printed means this file applies as
+with the steps below, it wins. Any other exit means this file applies as
 written.
 
 ## Policy spine (applies to every repo, no exceptions)

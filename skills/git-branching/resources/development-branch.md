@@ -1,12 +1,12 @@
-# Branching when the default branch is `development`
+# Branching when a `development` branch exists
 
-Applies only when the repo's GitHub default branch is `development`:
+Applies only when `development` exists on the remote:
 
 ```bash
-gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
+git ls-remote --exit-code --heads origin development
 ```
 
-If that prints anything else, ignore this file; the `main` instructions in `SKILL.md`
+If that exits non-zero, ignore this file; the `main` instructions in `SKILL.md`
 are the whole story.
 
 ## The model in one place

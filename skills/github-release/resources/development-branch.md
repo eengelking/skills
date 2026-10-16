@@ -1,12 +1,12 @@
-# Releasing when the default branch is `development`
+# Releasing when a `development` branch exists
 
-Applies only when the repo's GitHub default branch is `development`:
+Applies only when `development` exists on the remote:
 
 ```bash
-gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
+git ls-remote --exit-code --heads origin development
 ```
 
-If that prints anything else, ignore this file; `SKILL.md` as written is the whole
+If that exits non-zero, ignore this file; `SKILL.md` as written is the whole
 story. Here, merging a feature PR is not a release. Feature PRs land on `development`
 without a version bump, and a release happens only when the user decides
 `development` is a release candidate.
@@ -54,8 +54,8 @@ known failure, and don't cut a hotfix to dodge one.
    carries the bump. As in the standard flow this runs before the merge to `main`, so a
    failed publish doesn't leave `main` ahead of the registry.
 4. **Release PR.** Open `development` → `main`. Its body states that it is to be merged
-   with a regular merge commit and not squashed, names the version, and quotes the
-   CHANGELOG section. The user merges it.
+   with a regular merge commit and not squashed, names the version, quotes the
+   CHANGELOG section, and lists `Closes #N` for every issue the release ships. The user merges it.
 5. **Tag and GitHub Release** from `main` after the merge, per
    `resources/tag-and-github-release.md`. Tag the merge commit.
 
@@ -77,7 +77,7 @@ is then copied into `development` so the branches don't drift.
    bump, and CHANGELOG section all, not just the code). Resolve the CHANGELOG so the
    hotfix's section sits below `[Unreleased]` under its own version heading, exactly
    as on `main`, with nothing from the hotfix duplicated into `[Unreleased]`. Open a
-   PR into `development` that says `Closes #N` for the hotfix issue; the user merges
+   PR into `development` that says `Refs #N` for the hotfix issue (the hotfix PR into `main` already closed it); the user merges
    it.
 5. If a release-prep PR is already merged but its release hasn't happened yet, the
    backport's version and the pending one disagree. Stop and ask the user how to

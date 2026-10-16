@@ -10,6 +10,17 @@ tagged after the fact, from the history of that file.
 
 ## [Unreleased]
 
+### Changed
+
+- The development-branch workflow now triggers on whether a `development` branch exists
+  on the remote (`git ls-remote --exit-code --heads origin development`), not on the
+  GitHub default branch. The default branch stays `main`, so a plain clone gets released
+  code. Because `Closes #N` only fires for PRs into the default branch, feature and batch
+  PRs into `development` use `Refs #N` and the release PR carries `Closes #N` for every
+  issue it ships. `CLAUDE.md` and the four git/PR/issue/release skills are updated to
+  match, and "the default branch" in `CLAUDE.md` is now "the base branch" where it means
+  the PR target.
+
 ## [1.12.0] - 2026-10-16
 
 ### Added
