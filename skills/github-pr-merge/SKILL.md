@@ -88,9 +88,9 @@ resources/scripts/gh_merge_guard.sh <pr-number-or-url> [gh pr merge flags]
 Copy `resources/scripts/gh_merge_guard.sh` into this repo (e.g. `scripts/`) and wire
 it into your permission config's deny rule for `gh pr merge`. The wrapper looks up
 the PR's actual base branch via the GitHub API and refuses (exit 1, no merge
-attempted) if that base is `main` or `development`. Never try to route around it — raw `gh api`
-PR-merge calls, editing the permission config, etc. If work genuinely seems to need
-a `main` merge, that's the point to stop and ask the user, not to find another path
+attempted) if that base is `main` or `development`. Never try to route around it —
+raw `gh api` PR-merge calls, editing the permission config, etc. If work genuinely
+seems to need a `main` merge, that's the point to stop and ask the user, not to find another path
 to the same merge.
 
 The **only** merge an agent may ever perform unattended is a parallel-batch

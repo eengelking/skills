@@ -18,7 +18,8 @@ without a version bump, and a release happens only when the user decides
 - **Doc-only changes** still produce no release on their own. A release is cut when
   `[Unreleased]` holds at least one code-changing entry; doc-only entries ride along.
 - **The bump level comes from `[Unreleased]`.** Read everything accumulated since the
-  last release and apply the SemVer rules in `SKILL.md`: any breaking entry means
+  last release (a hotfix counts as a release, so the base version is the newest tag on
+  `main`, not the manifest on an older `development`) and apply the SemVer rules in `SKILL.md`: any breaking entry means
   MAJOR, otherwise any new feature means MINOR, otherwise PATCH. Pre-1.0 and the
   agent-workflow-contract rules are unchanged. If it's unclear which level an entry is,
   ask the user instead of picking.

@@ -26,7 +26,7 @@ branch is unchanged.
 | Batch final PR | `batch/*` → `development` | squash | to be squash-merged; `Closes #N` for every issue in the round |
 | Release prep | `release-prep/<version>` → `development` | squash | to be squash-merged; the version being prepared |
 | Release | `development` → `main` | regular merge commit | **not** to be squashed; the version and its CHANGELOG section |
-| Hotfix | `hotfix/*` → `main` | user's choice, say which | the version and what it fixes |
+| Hotfix | `hotfix/*` → `main` | user's choice, say which (squash or merge commit both work: the backport is cherry-picked from the branch's commits, and identical changes merge cleanly later) | the version and what it fixes |
 | Hotfix backport | `hotfix/*-backport` → `development` | squash | to be squash-merged; `Closes #N` for the hotfix's issue |
 
 Because `development` is the default branch, `Closes #N` on a PR into it closes the
