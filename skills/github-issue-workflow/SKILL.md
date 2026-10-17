@@ -12,12 +12,11 @@ template (see that skill for how an issue gets created in the first place). This
 skill governs everything from there: starting it, doing the work, and closing it
 out.
 
-## Development-branch workflow (default branch is `development`)
+## Development-branch workflow (a `development` branch exists)
 
-If `gh repo view --json defaultBranchRef --jq .defaultBranchRef.name` prints
-`development`, issue work branches off and merges into `development` instead of
+If `git ls-remote --exit-code --heads origin development` exits 0, issue work branches off and merges into `development` instead of
 `main`, and a hotfix issue closes differently. Read `resources/development-branch.md`
-alongside this file. Anything else printed means this file applies as written; every
+alongside this file. Any other exit means this file applies as written; every
 mention of `main` below is the standard workflow.
 
 ## Sequencing
