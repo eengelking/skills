@@ -14,11 +14,13 @@ in both workflows; only the points below change.
 
 - Branch off `development`, and the closing PR targets `development`. See
   `git-branching`'s `resources/development-branch.md` for branch names.
-- The PR carries `Closes #N`, and the issue is closed when that PR merges into
-  `development`. There is no manual close step. After confirming `state: MERGED`, verify
-  the issue is closed, as in `github-pr-merge`'s `resources/development-branch.md`
-  ("After a merge"). The release PR closes nothing. `Refs #N` only links an issue and
-  never closes it, so a PR that resolves an issue never uses it.
+- The PR carries `Closes #N` to name the issue it resolves. GitHub only acts on a closing
+  keyword in a PR into the default branch (`main`), so for a PR into `development` it
+  ignores the keyword and the issue stays open. After confirming `state: MERGED`, the
+  agent closes the issue and verifies it, as in `github-pr-merge`'s
+  `resources/development-branch.md` ("After a merge"). The release PR closes nothing.
+  `Refs #N` only links an issue and never closes it, so a PR that resolves an issue never
+  uses it.
 - A merged PR still doesn't authorize starting the next issue.
 
 ## Parallel batches
@@ -46,7 +48,7 @@ Which path a hotfix takes depends on whether `development` matches `main`; see
   PR into `development`.
 - **`development` matches `main`.** The fix is an ordinary branch and PR into
   `development`, so the "Where the work lands" rules above apply: `Closes #N` in the
-  PR, which closes the issue when it merges. There is no backport.
+  PR, and the agent closes the issue after the merge. There is no backport.
 
 ## Closing out
 

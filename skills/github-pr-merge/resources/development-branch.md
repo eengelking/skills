@@ -34,16 +34,26 @@ branch is unchanged.
 
 An issue is closed when the PR that resolves it merges, not when a release ships. A
 feature, fix or batch-final PR into `development` carries `Closes #N` for each issue it
-resolves, and the issue closes when that PR merges. Nobody closes it by hand.
+resolves, so the PR names what it resolves.
+
+**GitHub will not close the issue for a PR into `development`.** GitHub's documentation
+says closing keywords in a pull request description "are interpreted only when the pull
+request targets the repository's default branch," and that otherwise "these keywords are
+ignored, no links are created." The default branch stays `main` in this workflow, so a
+PR into `development` links and closes nothing. The agent closes the issue itself once
+the merge is confirmed (see "After a merge" below). A commit-message keyword behaves the
+same way. If a project does make `development` its default branch, GitHub closes the
+issue and the agent only verifies that it did.
 
 `Refs #N` only links a PR to an issue. It never closes it. Use it where the PR relates
 to an issue that something else already closed or will close (a hotfix backport), and
 never on a PR that resolves the issue.
 
-A hotfix PR into `main` carries `Closes #N`. Its backport into `development` carries
-`Refs #N`, because the hotfix PR already closed the issue. A sub-agent's PR into a batch
-integration branch claims no `Closes #N`, because that would close the issue before the
-work reaches `development`; the batch-final PR into `development` carries them all.
+A hotfix PR into `main` carries `Closes #N`, and GitHub closes the issue when it merges,
+because `main` is the default branch. Its backport into `development` carries `Refs #N`,
+because the hotfix PR already closed the issue. A sub-agent's PR into a batch integration
+branch claims no `Closes #N`, because the issue must stay open until the work reaches
+`development`; the batch-final PR into `development` carries them all.
 
 ## Feature PRs do not bump the version
 
@@ -66,17 +76,22 @@ before merging either kind of PR.
 
 Confirm `state: MERGED` first, as in `SKILL.md`. Then:
 
-- Feature, batch and `development`-bound hotfix PRs: verify that each issue the PR
-  carried `Closes #N` for is now closed.
+- Feature, batch and `development`-bound hotfix PRs: close each issue the PR carried
+  `Closes #N` for, then verify it. GitHub ignored the keyword (see "Closing issues"),
+  so the issue is still open.
 
   ```bash
-  gh issue view <N> --json state   # expect CLOSED
+  gh issue view <N> --json state        # OPEN: GitHub did not close it
+  gh issue close <N> --comment "Fixed in #<PR>. The change is on development and ships with the next release."
+  gh issue view <N> --json state        # expect CLOSED
   ```
 
-  If one is still open, tell the user which and why you think it didn't close (a typo
-  in the keyword, an issue in another repo). Don't close it yourself. If the issue's
-  Definition of Done includes "is live" or "is published", say in the issue that the
-  change is on `development` and ships with the next release.
+  Close only the issues the merged PR named with `Closes #N`, and never one it only
+  linked with `Refs #N`. The comment always says the change is on `development` and ships
+  with the next release, and if the issue's Definition of Done includes "is live" or "is
+  published", that item stays open until the release. If the issue is already `CLOSED`
+  when you check (the repo's default branch is `development`, or someone closed it), do
+  nothing more.
 - Feature, batch, release-prep, and backport branches: remove the branch's worktree,
   sync `development` in the primary checkout, and delete the branch locally and on the
   remote, with deletion verified on both sides, exactly as in `SKILL.md`.

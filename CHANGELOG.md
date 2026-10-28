@@ -41,10 +41,13 @@ tagged after the fact, from the history of that file.
 ### Changed
 
 - In the development-branch workflow, an issue is closed when the PR that resolves it
-  merges into `development`, not when a release ships. The PR carries `Closes #N` and
-  GitHub closes the issue on merge, so nobody closes it by hand; the agent only verifies
-  it is closed. `Refs #N` only links an issue and never closes it. The release PR closes
-  nothing. A hotfix PR into `main` carries `Closes #N` and its backport uses `Refs #N`.
+  merges into `development`, not when a release ships. The PR carries `Closes #N` to name
+  the issue, but GitHub honors a closing keyword only for a PR into the default branch
+  (`main`) and ignores it otherwise, so after confirming the merge the agent closes each
+  named issue with `gh issue close`, a comment saying the change is on `development` and
+  ships with the next release, and a check that it is closed. `Refs #N` only links an
+  issue and never closes it. The release PR closes nothing. A hotfix PR into `main`
+  carries `Closes #N`, which GitHub does honor there, and its backport uses `Refs #N`.
   `github-pr-merge` and `github-issue-workflow` agree on this.
 - In the development-branch workflow, a hotfix now has two paths. If `development`
   matches `main`, the fix is made on `development` and ships in the next release with a
