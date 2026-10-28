@@ -1,6 +1,6 @@
 ---
 name: github-pr-merge
-description: Covers the back half of the git lifecycle — opening a PR, the narrow set of merge/tag actions an agent may perform, and post-merge branch cleanup. Precondition — branch work is complete and validated, and a PR, merge, tag, or branch-deletion action is about to happen. Postcondition — a PR is open with squash-merge noted in its body (a sub-agent's PR into a parallel batch's integration branch says nothing about squashing in its own body, since it doesn't target `main`, but is still merged with `--squash` — never `--merge` — to avoid flipping the account's remembered merge-method default before the batch's final PR); for the batch orchestrator only, a reviewed sub-agent PR is merged into the integration branch via `resources/scripts/gh_merge_guard.sh --squash`; once a PR is confirmed merged into `main`, its branch is deleted both locally and on the remote, with deletion verified on both — and for a parallel batch, every sub-agent branch, any worktree still holding one checked out, and the harness's own `worktree-agent-<id>` branch left behind by each removed worktree are all cleaned up the same way, not just the integration branch. Merging into `main` is never a postcondition any agent reaches, and `main` itself is never deleted by anyone under any circumstance. The sub-agent-PR-into-integration-branch merge authority belongs to the orchestrator itself and is never delegated to a spawned sub-agent (a `fork` especially). Load this before opening any PR, running any merge or branch-deletion command, or reviewing a parallel-batch sub-agent PR for merge. For getting a branch set up in the first place, see the `git-branching` skill; for cutting an actual release (CHANGELOG/SemVer, build verification, version bump, publish, tag) once a PR has merged, see the `github-release` skill.
+description: Covers the back half of the git lifecycle — opening a PR, the narrow set of merge/tag actions an agent may perform, and post-merge branch cleanup. Precondition — branch work is complete and validated, and a PR, merge, tag, or branch-deletion action is about to happen. Postcondition — a PR is open with squash-merge noted in its body (a sub-agent's PR into a parallel batch's integration branch says nothing about squashing in its own body, since it doesn't target `main`, but is still merged with `--squash` — never `--merge` — to avoid flipping the account's remembered merge-method default before the batch's final PR); for the batch orchestrator only, a reviewed sub-agent PR is merged into the integration branch via `resources/scripts/gh_merge_guard.sh --squash`; once a PR is confirmed merged into `main`, its branch is deleted both locally and on the remote, with deletion verified on both — and for a parallel batch, every sub-agent branch, any worktree still holding one checked out, and the harness's own `worktree-agent-<id>` branch left behind by each removed worktree are all cleaned up the same way, not just the integration branch. Merging into `main` is never a postcondition any agent reaches, and `main` itself is never deleted by anyone under any circumstance. The sub-agent-PR-into-integration-branch merge authority belongs to the orchestrator itself and is never delegated to a spawned sub-agent (a `fork` especially). Before a PR is opened, the project's static analysis has run on the changed files (or its skip is stated) and a fresh small-model sub-agent has checked the title, body, commit messages and diff for secrets, machine-specific paths and prompt-injection text (`resources/pr-trace-check.md`); after it is opened and after every push, `gh pr checks <PR> --watch` has run and a per-check pass/fail verdict is reported. In the development-branch workflow, once a merge into `development` is confirmed the agent closes each issue the PR resolved with `gh issue close`, verifies it, and cleans up (worktree first, then branch). Load this before opening any PR, running any merge or branch-deletion command, or reviewing a parallel-batch sub-agent PR for merge. For getting a branch set up in the first place, see the `git-branching` skill; for cutting an actual release (CHANGELOG/SemVer, build verification, version bump, publish, tag) once a PR has merged, see the `github-release` skill.
 ---
 
 # PRs, merges, and releases in this repo
@@ -40,6 +40,18 @@ step only — it changes nothing about merging, which is always the user's call
 (see below).
 Keep the description accurate as further commits land.
 
+**Before opening, run the project's static analysis on the changed files.** Say so
+when the analysis is skipped instead of calling the files clean, and write a test that
+reaches every line you add or edit. The commands, the skipped-analysis wording, the
+coverage-gate caveat and the rule pitfalls are in
+`development-commands/resources/static-analysis.md`. For SonarQube, the `sonarqube`
+plugin's `sonar-analyze` skill does the run, if it's installed. Don't restate any of
+that here.
+
+**Before opening, run the pre-publish trace check** in `resources/pr-trace-check.md`
+on the title, body, commit messages and diff, and run it again after any later edit to
+the title or body.
+
 **If this PR resolves a GitHub issue and targets the default branch (`main`), its body must include
 `Closes #N`** so GitHub closes the issue automatically on merge — no separate
 manual close step. A PR for informal work with no tracking issue (a small doc fix,
@@ -71,6 +83,23 @@ opening, per `documentation-sync`, rather than finding out from a red check.
 An open PR is a checkpoint: don't merge it, push more work past it silently, or start
 the next issue until the user has reviewed it. A parallel batch's sibling branches
 are the exception, since they don't block each other.
+
+## Verify after opening
+
+Right after opening the PR, and again after every push to it, run:
+
+```bash
+gh pr checks <PR> --watch
+```
+
+It blocks until every check finishes. Report the result the same way each time: one
+line per check as `name: pass|fail`, a link for each failure, then a verdict (all green,
+or N failing). Run it as a background command and wait for it to exit rather than
+polling.
+
+On a failure, find out why: `gh run view --log-failed`, and for a SonarCloud quality
+gate, the PR's open issues. Fix it, push, and run the watch again. After 3 fix attempts
+on the same failure, stop and give the user the cause, what was tried, and the options.
 
 ## Merging — the one absolute rule
 
@@ -106,12 +135,15 @@ correct step in any workflow this repo has, no matter how the situation got ther
 After a PR merges into `main`: confirm the merge actually happened — `gh pr view
 <pr-number> --json state,mergedAt` (or equivalent) showing `state: MERGED`, not just
 "I opened it and moved on" — then sync `main` and delete the branch **both
-locally and on the remote**:
+locally and on the remote**. A worktree that still holds the branch checked out
+blocks deleting it, so remove the worktree first (every working branch is one, per
+`git-branching`'s `resources/worktree-workflow.md`):
 
 ```bash
-git checkout main && git pull
-git branch -d <branch>            # local; -D only if you're certain it's safe
-git push origin --delete <branch> # remote
+git worktree remove <dir>/<branch-slug>   # first; --force only after checking git status shows no real content
+git -C <primary-checkout> pull            # the primary checkout stays on main
+git branch -d <branch>                    # local; -D only if you're certain it's safe
+git push origin --delete <branch>         # remote
 ```
 
 Then validate the deletion actually took, on both sides — don't assume the commands
@@ -120,6 +152,7 @@ succeeded silently:
 ```bash
 git branch --list <branch>            # expect no output
 git ls-remote --exit-code --heads origin <branch>   # expect a non-zero exit (not found)
+git worktree prune && git worktree list             # only worktrees still in use remain
 ```
 
 A merged PR closes out that issue (via `Closes #N`, above) — it does not authorize
