@@ -19,9 +19,9 @@ None beyond CLAUDE.md's list.
 
 ## Branching and Workflow Overrides
 
-- **Worktrees.** This repo overrides `git-branching`'s default only by naming its details:
-  the worktree folder is `.claude/worktrees/` (git-ignored), and there is no install step,
-  because the repo has no dependencies.
+- **Worktrees.** The folder is `.claude/worktrees/`, which CLAUDE.md names and which is
+  git-ignored here. There is no install step in a fresh worktree, because the repo has no
+  dependencies.
 - **Version check (pre-PR).** CLAUDE.md's Git & GitHub Workflow has no such step; this repo
   adds one. It applies only when the branch changes skill content (any `skills/*/SKILL.md`
   or `skills/*/resources/` file). A docs-only diff that touches no skill (`CLAUDE.md`,
