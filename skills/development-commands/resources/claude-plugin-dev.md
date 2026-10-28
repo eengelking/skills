@@ -35,11 +35,10 @@ declaration file, `claude-code.d.ts`. The engine writes that file only while an
 interactive session watches the plugin folder (it is also written under a temp folder
 when the `plugin-authoring` skill loads). To check by hand:
 
-1. Find the newest `claude-code.d.ts`, for example:
+1. Find a `claude-code.d.ts` (if there are several, take the newest with `ls -t`), for example:
 
    ```bash
-   ls -t /private/tmp/claude-*/bundled-skills/*/*/plugin-authoring/types/claude-code.d.ts \
-         "${TMPDIR:-/tmp}"/claude-*/bundled-skills/*/*/plugin-authoring/types/claude-code.d.ts 2>/dev/null | head -1
+   find "${TMPDIR:-/tmp}" /tmp -path '*plugin-authoring/types/claude-code.d.ts' 2>/dev/null | head
    ```
 
 2. Copy it to the plugin's git-ignored `.claude-plugin/types/` folder (the project's
