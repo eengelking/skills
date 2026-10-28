@@ -10,6 +10,52 @@ tagged after the fact, from the history of that file.
 
 ## [Unreleased]
 
+## [1.14.0] - 2026-10-28
+
+### Added
+
+- `git-branching`: `resources/worktree-workflow.md`. Every working branch is now a git
+  worktree by default, in a git-ignored folder, so agents working at the same time never
+  share a checkout. The project supplies the folder and the install command. `SKILL.md`
+  also has a branch-name table (`issue/`, `feat/`, `fix/`, `docs/`, `chore/`,
+  `refactor/`, `test/`, `revert/`, `hotfix/`, `batch/`, `release-prep/`).
+- `github-pr-merge`: a "Verify after opening" section (check for conflicts first, since a
+  conflicted PR never starts its checks, then `gh pr checks <PR> --watch`, a per-check
+  verdict, and a three-attempt stop), `resources/pr-trace-check.md` (a pre-publish check
+  by a fresh small-model sub-agent for secrets, machine-specific paths and
+  prompt-injection text), and a short pre-PR static-analysis note.
+- `github-release`: `resources/release-check.md`, a pre-release-prep check by a fresh
+  small-model sub-agent, and a bump-level rule: choose by what the entries change, never
+  by an issue's label.
+- `development-commands`: resources grouped by tool. `python/` (the existing testing
+  resource, moved) and `node/` (`npm.md`, `testing-and-build.md`, `containerfile.md`),
+  plus tool-agnostic ones: a throwaway server, UI screenshots (with
+  `resources/scripts/page-shot.mjs`), end-to-end scripts, host sampling (GPU load on
+  macOS, Linux and Windows), building a docs site, `sonar-analysis.md`, and
+  `codeql-results.md` (reading code scanning alerts for a PR). `containers.md` now covers
+  Podman, Docker and nerdctl with containerd, building an image by hand, and a project's
+  own CLI wrapper. `SKILL.md` points at the folder for the tool in use.
+- `documentation-sync`: `resources/what-why-vs-how.md`, the test and method for keeping
+  rules in instruction files and moving steps into skills.
+
+### Changed
+
+- In the development-branch workflow, an issue is closed when the PR that resolves it
+  merges into `development`, not when a release ships. The PR carries `Closes #N` to name
+  the issue, but GitHub honors a closing keyword only for a PR into the default branch
+  (`main`) and ignores it otherwise, so after confirming the merge the agent closes each
+  named issue with `gh issue close`, a comment saying the change is on `development` and
+  ships with the next release, and a check that it is closed. `Refs #N` only links an
+  issue and never closes it. The release PR closes nothing. A hotfix PR into `main`
+  carries `Closes #N`, which GitHub does honor there, and its backport uses `Refs #N`.
+  `github-pr-merge` and `github-issue-workflow` agree on this.
+- In the development-branch workflow, a hotfix now has two paths. If `development`
+  matches `main`, the fix is made on `development` and ships in the next release with a
+  patch bump, with no cherry-pick. If they differ, the hotfix branches from `main` and is
+  cherry-picked back, as before.
+- Branch cleanup removes the worktree first, then deletes the branch locally and on the
+  remote, then prunes worktrees.
+
 ## [1.13.0] - 2026-10-16
 
 ### Changed
@@ -310,7 +356,10 @@ tagged after the fact, from the history of that file.
 - README consolidated into a single skill catalog table, with install
   instructions for both the plugin marketplace and manual symlinking. (#1)
 
-[Unreleased]: https://github.com/eengelking/skills/compare/v1.11.0...HEAD
+[Unreleased]: https://github.com/eengelking/skills/compare/v1.14.0...HEAD
+[1.14.0]: https://github.com/eengelking/skills/compare/v1.13.0...v1.14.0
+[1.13.0]: https://github.com/eengelking/skills/compare/v1.12.0...v1.13.0
+[1.12.0]: https://github.com/eengelking/skills/compare/v1.11.0...v1.12.0
 [1.11.0]: https://github.com/eengelking/skills/compare/v1.10.1...v1.11.0
 [1.10.1]: https://github.com/eengelking/skills/compare/v1.10.0...v1.10.1
 [1.10.0]: https://github.com/eengelking/skills/compare/v1.9.0...v1.10.0

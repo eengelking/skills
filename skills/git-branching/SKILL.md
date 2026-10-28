@@ -1,6 +1,6 @@
 ---
 name: git-branching
-description: Covers the front half of the git lifecycle — getting from no branch to the correct one. Precondition — about to edit any tracked file in this repo, whether that's a GitHub-issue-tracked unit of work, a parallel batch of issues, or an informal fix with no tracking issue at all; `main`'s state is not yet confirmed current. There is no category of work exempt from this — "it doesn't need a tracking issue" is not "it doesn't need a branch." Postcondition — on a correctly-named branch forked from the correct parent: sequential/informal work off `main`, a parallel batch's integration branch off `main`, and each sub-agent's branch off that integration branch (never off `main` directly). Mandates `isolation: "worktree"` for every parallel-batch sub-agent spawn, covers what a sub-agent running in that worktree needs to know about keeping its shell commands simple before the harness's isolation guard refuses one, and notes that a worktree outlives its branch's merge and needs its own cleanup (see github-pr-merge). If the repo has a `development` branch on the remote, the parent is `development` instead of `main` and hotfixes fork from `main` — see `resources/development-branch.md`. Load this before the first Edit/Write of any session on this repo — including before writing a plan-mode implementation once approved — or before spawning a worktree-isolated sub-agent. For PR creation, merge permissions, and releases once the work is done, see the `github-pr-merge` skill instead.
+description: Covers the front half of the git lifecycle — getting from no branch to the correct one. Precondition — about to edit any tracked file in this repo, whether that's a GitHub-issue-tracked unit of work, a parallel batch of issues, or an informal fix with no tracking issue at all; `main`'s state is not yet confirmed current. There is no category of work exempt from this — "it doesn't need a tracking issue" is not "it doesn't need a branch." Postcondition — on a correctly-named branch forked from the correct parent: sequential/informal work off `main`, a parallel batch's integration branch off `main`, and each sub-agent's branch off that integration branch (never off `main` directly). Every working branch is created as a git worktree in a git-ignored folder, by default, so agents working at the same time never share a checkout and the primary checkout stays on the base branch (see `resources/worktree-workflow.md` for the commands, the project-supplied folder and install step, and cleanup). Mandates `isolation: "worktree"` for every parallel-batch sub-agent spawn, covers what a sub-agent running in that worktree needs to know about keeping its shell commands simple before the harness's isolation guard refuses one, and notes that a worktree outlives its branch's merge and needs its own cleanup (see github-pr-merge). If the repo has a `development` branch on the remote, the parent is `development` instead of `main`, and a hotfix forks from `main` only when `development` differs from `main` (when they match it is an ordinary branch off `development`) — see `resources/development-branch.md`. Load this before the first Edit/Write of any session on this repo — including before writing a plan-mode implementation once approved — or before spawning a worktree-isolated sub-agent. For PR creation, merge permissions, and releases once the work is done, see the `github-pr-merge` skill instead.
 ---
 
 # Starting work: branches in this repo
@@ -20,11 +20,19 @@ to load this skill, before the first file touches disk.
 ## Every unit of work, sequential or parallel
 
 ```bash
-git checkout main && git pull
+git fetch origin
 ```
 
 Don't assume `main` is current — always sync before branching, even if you synced
 recently in the same session.
+
+**Every working branch is a git worktree.** Assume any branch may have another agent
+working in it at the same time; separate worktrees keep two agents from trading files
+or racing each other's checkouts. So the branch is created with `git worktree add`, in
+a git-ignored folder, not with `git checkout -b` in the primary checkout, which stays
+on the base branch as a clean reference. The commands, the folder, installing
+dependencies, and cleanup are in `resources/worktree-workflow.md`. Wherever this skill
+says "branch off X", it means a worktree on a new branch forked from `origin/X`.
 
 ### Technical backstop: the pre-commit hook
 
@@ -47,6 +55,29 @@ one-time `git config` step won't either.
 **A GitHub issue worked sequentially** (the normal case): branch directly off
 `main`, named for the issue, e.g. `issue/42-grading-and-drill`.
 
+### Branch names
+
+A branch name is `<prefix>/<slug>`: lowercase, words joined with hyphens, short enough
+to read in a list. The prefix says what kind of work the branch holds.
+
+| Prefix | Use it for | Example |
+|---|---|---|
+| `issue/<n>-<slug>` | Any work tracked by a GitHub issue. Use this whenever an issue exists, whatever the kind of change | `issue/42-grading-and-drill` |
+| `feat/<slug>` | New behavior with no tracking issue | `feat/export-csv` |
+| `fix/<slug>` | A bug fix with no tracking issue | `fix/login-redirect` |
+| `docs/<slug>` | Documentation only | `docs/readme-install-steps` |
+| `chore/<slug>` | Tooling, dependencies, CI, config; no behavior change | `chore/bump-linter` |
+| `refactor/<slug>` | Restructuring with no behavior change | `refactor/split-parser` |
+| `test/<slug>` | Adding or fixing tests only | `test/cover-retry-path` |
+| `revert/<slug>` | Undoing an earlier change. Name what is reverted | `revert/pr-57-export-csv` |
+| `hotfix/<n>-<slug>` | An urgent fix. Where it forks from depends on the workflow (see below) | `hotfix/63-null-session` |
+| `batch/<description>-round<n>` | A parallel batch's integration branch | `batch/theme-rollout-round1` |
+| `release-prep/<version>` | The version bump and changelog retitle (development-branch workflow) | `release-prep/1.4.0` |
+
+Pick the prefix by the work, not by who is doing it. Don't reuse the name of a branch
+that was already merged. A worktree's folder name is the branch name with each `/`
+written as `-` (`resources/worktree-workflow.md`).
+
 ## A deliberately parallel batch of issues
 
 Use this shape any time a body of work is explicitly split into parallel issues
@@ -64,7 +95,7 @@ Branching a sub-agent off `main` instead of the integration branch is the single
 most common mistake here — it silently defeats the whole point of the integration
 branch, since there's then no single branch the orchestrator can consolidate the
 round's shared-doc updates onto before anything reaches `main`. Double check which
-branch you're forking from before running `git checkout -b`.
+branch you're forking from before creating the worktree.
 
 **Every parallel-batch sub-agent spawn MUST pass `isolation: "worktree"` on the
 `Agent` tool call — this is not optional and not situational.** Sub-agents
@@ -135,5 +166,5 @@ load the `github-pr-merge` skill to open the PR.
 
 A worktree created for this branch outlives the branch's PR being merged — it isn't
 cleaned up automatically, and a leftover worktree still holding a branch checked out
-will block deleting that branch later. See `github-pr-merge`'s cleanup section once the
-batch's final PR has merged.
+will block deleting that branch later. Remove the worktree first, then delete the
+branch; the order is in `github-pr-merge`'s cleanup section.

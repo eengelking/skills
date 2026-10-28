@@ -7,7 +7,7 @@ as a reference for how the generic patterns cash out in practice.
 
 ## Tooling
 
-`uv`-managed Python (see `resources/python-testing.md` for the generic
+`uv`-managed Python (see `resources/python/testing.md` for the generic
 `.venv`/`pytest`/`ruff` pattern). Project-specific scripts, run the same way:
 
 ```bash
