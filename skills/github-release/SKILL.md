@@ -1,6 +1,6 @@
 ---
 name: github-release
-description: Covers cutting an actual release once a PR has merged `main` to the released state — CHANGELOG/SemVer policy, build/test verification, version-bump mechanics, artifact publishing (container image or package registry), and the git tag + GitHub Release. Precondition — a PR bringing `main` to a releasable state is about to merge or has just merged, and this repo does releases at all (ask the user if that's not already established). Postcondition — `CHANGELOG.md` and any version manifest are bumped in the merging PR, any code/container/package this repo builds has been verified and published, and `main` has an annotated tag plus a GitHub Release whose notes are the CHANGELOG section verbatim. Load this once `github-pr-merge`'s branch/PR/merge work is otherwise done and a release is in scope — for opening the PR itself, merge authority, and branch cleanup, see `github-pr-merge` instead.
+description: Covers cutting an actual release once a PR has merged `main` to the released state — CHANGELOG/SemVer policy, build/test verification, version-bump mechanics, artifact publishing (container image or package registry), and the git tag + GitHub Release. Precondition — a PR bringing `main` to a releasable state is about to merge or has just merged, and this repo does releases at all (ask the user if that's not already established). Postcondition — `CHANGELOG.md` and any version manifest are bumped in the merging PR, any code/container/package this repo builds has been verified and published, and `main` has an annotated tag plus a GitHub Release whose notes are the CHANGELOG section verbatim. In the development-branch workflow, a fresh small-model sub-agent also runs a release check (version files agree, a dated CHANGELOG section, documented numbers still match the code, the docs build) before the release-prep PR opens (`resources/release-check.md`), and a hotfix is either made on `development` (when it matches `main`) or branched from `main` and cherry-picked back. Load this once `github-pr-merge`'s branch/PR/merge work is otherwise done and a release is in scope — for opening the PR itself, merge authority, and branch cleanup, see `github-pr-merge` instead.
 ---
 
 # Cutting a release
@@ -27,8 +27,9 @@ git ls-remote --exit-code --heads origin development
 
 Exit 0 means feature PRs merge there with no version bump, and a release is a
 deliberate `development` → `main` release PR that carries the bump, the CHANGELOG
-retitle, and the release-candidate gate, with hotfixes going to `main` and then
-cherry-picked back. Read `resources/development-branch.md` first; where it conflicts
+retitle, and the release-candidate gate, with a hotfix either made on `development`
+(when it matches `main`) or branched from `main` and cherry-picked back (when it
+differs). A release check runs before the release-prep PR opens. Read `resources/development-branch.md` first; where it conflicts
 with the steps below, it wins. Any other exit means this file applies as
 written.
 
