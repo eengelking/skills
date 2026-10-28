@@ -34,13 +34,16 @@ branch is unchanged.
 
 An issue is closed when the PR that resolves it merges, not when a release ships. A
 feature, fix or batch-final PR into `development` carries `Closes #N` for each issue it
-resolves. GitHub only acts on a closing keyword in a PR into the default branch, and
-the default branch stays `main`, so it won't close the issue by itself. The agent does
-it after the merge is confirmed; see "After a merge" below.
+resolves, and the issue closes when that PR merges. Nobody closes it by hand.
 
-A hotfix PR into `main` carries `Closes #N`, which GitHub honors there. Its backport
-into `development` carries `Refs #N`. A sub-agent's PR into a batch integration branch
-claims no `Closes #N`; the batch-final PR into `development` carries them all.
+`Refs #N` only links a PR to an issue. It never closes it. Use it where the PR relates
+to an issue that something else already closed or will close (a hotfix backport), and
+never on a PR that resolves the issue.
+
+A hotfix PR into `main` carries `Closes #N`. Its backport into `development` carries
+`Refs #N`, because the hotfix PR already closed the issue. A sub-agent's PR into a batch
+integration branch claims no `Closes #N`, because that would close the issue before the
+work reaches `development`; the batch-final PR into `development` carries them all.
 
 ## Feature PRs do not bump the version
 
@@ -63,17 +66,17 @@ before merging either kind of PR.
 
 Confirm `state: MERGED` first, as in `SKILL.md`. Then:
 
-- Feature, batch and `development`-bound hotfix PRs: close each issue the PR resolves,
-  then check it took.
+- Feature, batch and `development`-bound hotfix PRs: verify that each issue the PR
+  carried `Closes #N` for is now closed.
 
   ```bash
-  gh issue close <N> --comment "Fixed in #<PR>; ships with the next release."
   gh issue view <N> --json state   # expect CLOSED
   ```
 
-  The comment, or the issue, says the change is on `development` and ships with the
-  next release. If the issue's Definition of Done includes "is live" or "is published",
-  that item stays open until the release.
+  If one is still open, tell the user which and why you think it didn't close (a typo
+  in the keyword, an issue in another repo). Don't close it yourself. If the issue's
+  Definition of Done includes "is live" or "is published", say in the issue that the
+  change is on `development` and ships with the next release.
 - Feature, batch, release-prep, and backport branches: remove the branch's worktree,
   sync `development` in the primary checkout, and delete the branch locally and on the
   remote, with deletion verified on both sides, exactly as in `SKILL.md`.

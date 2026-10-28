@@ -55,6 +55,29 @@ one-time `git config` step won't either.
 **A GitHub issue worked sequentially** (the normal case): branch directly off
 `main`, named for the issue, e.g. `issue/42-grading-and-drill`.
 
+### Branch names
+
+A branch name is `<prefix>/<slug>`: lowercase, words joined with hyphens, short enough
+to read in a list. The prefix says what kind of work the branch holds.
+
+| Prefix | Use it for | Example |
+|---|---|---|
+| `issue/<n>-<slug>` | Any work tracked by a GitHub issue. Use this whenever an issue exists, whatever the kind of change | `issue/42-grading-and-drill` |
+| `feat/<slug>` | New behavior with no tracking issue | `feat/export-csv` |
+| `fix/<slug>` | A bug fix with no tracking issue | `fix/login-redirect` |
+| `docs/<slug>` | Documentation only | `docs/readme-install-steps` |
+| `chore/<slug>` | Tooling, dependencies, CI, config; no behavior change | `chore/bump-linter` |
+| `refactor/<slug>` | Restructuring with no behavior change | `refactor/split-parser` |
+| `test/<slug>` | Adding or fixing tests only | `test/cover-retry-path` |
+| `revert/<slug>` | Undoing an earlier change. Name what is reverted | `revert/pr-57-export-csv` |
+| `hotfix/<n>-<slug>` | An urgent fix. Where it forks from depends on the workflow (see below) | `hotfix/63-null-session` |
+| `batch/<description>-round<n>` | A parallel batch's integration branch | `batch/theme-rollout-round1` |
+| `release-prep/<version>` | The version bump and changelog retitle (development-branch workflow) | `release-prep/1.4.0` |
+
+Pick the prefix by the work, not by who is doing it. Don't reuse the name of a branch
+that was already merged. A worktree's folder name is the branch name with each `/`
+written as `-` (`resources/worktree-workflow.md`).
+
 ## A deliberately parallel batch of issues
 
 Use this shape any time a body of work is explicitly split into parallel issues

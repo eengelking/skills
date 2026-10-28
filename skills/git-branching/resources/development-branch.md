@@ -33,7 +33,7 @@ branch is then created as a worktree forked from `origin/development`, per
 | Work | Branch name | Forks from | PR targets |
 |---|---|---|---|
 | A GitHub issue, worked sequentially | `issue/<n>-<slug>` | `development` | `development` |
-| Informal fix, no issue | `fix/<slug>` (any clear name) | `development` | `development` |
+| Informal work, no issue (`feat/`, `fix/`, `docs/`, `chore/`, `refactor/`, `test/`, `revert/`; see the table in `SKILL.md`) | `<prefix>/<slug>` | `development` | `development` |
 | Parallel batch: orchestrator's integration branch | `batch/<description>-round<n>` | `development` | `development` |
 | Parallel batch: each sub-agent | `issue/<n>-<slug>` | the integration branch | the integration branch |
 | Release prep (version bump + changelog retitle) | `release-prep/<version>` | `development` | `development` |

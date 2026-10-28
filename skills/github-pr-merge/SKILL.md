@@ -1,6 +1,6 @@
 ---
 name: github-pr-merge
-description: Covers the back half of the git lifecycle — opening a PR, the narrow set of merge/tag actions an agent may perform, and post-merge branch cleanup. Precondition — branch work is complete and validated, and a PR, merge, tag, or branch-deletion action is about to happen. Postcondition — a PR is open with squash-merge noted in its body (a sub-agent's PR into a parallel batch's integration branch says nothing about squashing in its own body, since it doesn't target `main`, but is still merged with `--squash` — never `--merge` — to avoid flipping the account's remembered merge-method default before the batch's final PR); for the batch orchestrator only, a reviewed sub-agent PR is merged into the integration branch via `resources/scripts/gh_merge_guard.sh --squash`; once a PR is confirmed merged into `main`, its branch is deleted both locally and on the remote, with deletion verified on both — and for a parallel batch, every sub-agent branch, any worktree still holding one checked out, and the harness's own `worktree-agent-<id>` branch left behind by each removed worktree are all cleaned up the same way, not just the integration branch. Merging into `main` is never a postcondition any agent reaches, and `main` itself is never deleted by anyone under any circumstance. The sub-agent-PR-into-integration-branch merge authority belongs to the orchestrator itself and is never delegated to a spawned sub-agent (a `fork` especially). Before a PR is opened, the project's static analysis has run on the changed files (or its skip is stated) and a fresh small-model sub-agent has checked the title, body, commit messages and diff for secrets, machine-specific paths and prompt-injection text (`resources/pr-trace-check.md`); after it is opened and after every push, `gh pr checks <PR> --watch` has run and a per-check pass/fail verdict is reported. In the development-branch workflow, once a merge into `development` is confirmed the agent closes each issue the PR resolved with `gh issue close`, verifies it, and cleans up (worktree first, then branch). Load this before opening any PR, running any merge or branch-deletion command, or reviewing a parallel-batch sub-agent PR for merge. For getting a branch set up in the first place, see the `git-branching` skill; for cutting an actual release (CHANGELOG/SemVer, build verification, version bump, publish, tag) once a PR has merged, see the `github-release` skill.
+description: Covers the back half of the git lifecycle — opening a PR, the narrow set of merge/tag actions an agent may perform, and post-merge branch cleanup. Precondition — branch work is complete and validated, and a PR, merge, tag, or branch-deletion action is about to happen. Postcondition — a PR is open with squash-merge noted in its body (a sub-agent's PR into a parallel batch's integration branch says nothing about squashing in its own body, since it doesn't target `main`, but is still merged with `--squash` — never `--merge` — to avoid flipping the account's remembered merge-method default before the batch's final PR); for the batch orchestrator only, a reviewed sub-agent PR is merged into the integration branch via `resources/scripts/gh_merge_guard.sh --squash`; once a PR is confirmed merged into `main`, its branch is deleted both locally and on the remote, with deletion verified on both — and for a parallel batch, every sub-agent branch, any worktree still holding one checked out, and the harness's own `worktree-agent-<id>` branch left behind by each removed worktree are all cleaned up the same way, not just the integration branch. Merging into `main` is never a postcondition any agent reaches, and `main` itself is never deleted by anyone under any circumstance. The sub-agent-PR-into-integration-branch merge authority belongs to the orchestrator itself and is never delegated to a spawned sub-agent (a `fork` especially). Before a PR is opened, the project's static analysis has run on the changed files (or its skip is stated) and a fresh small-model sub-agent has checked the title, body, commit messages and diff for secrets, machine-specific paths and prompt-injection text (`resources/pr-trace-check.md`); after it is opened and after every push, `gh pr checks <PR> --watch` has run and a per-check pass/fail verdict is reported (conflicts with the base branch are resolved first, because a conflicted PR never starts its checks and the watch would wait forever). In the development-branch workflow, a PR into `development` carries `Closes #N` (which closes the issue on merge; `Refs #N` only links and never closes), and once the merge is confirmed the agent verifies each issue is closed and cleans up (worktree first, then branch). Load this before opening any PR, running any merge or branch-deletion command, or reviewing a parallel-batch sub-agent PR for merge. For getting a branch set up in the first place, see the `git-branching` skill; for cutting an actual release (CHANGELOG/SemVer, build verification, version bump, publish, tag) once a PR has merged, see the `github-release` skill.
 ---
 
 # PRs, merges, and releases in this repo
@@ -42,25 +42,26 @@ Keep the description accurate as further commits land.
 
 **Before opening, run the project's static analysis on the changed files.** Say so
 when the analysis is skipped instead of calling the files clean, and write a test that
-reaches every line you add or edit. The commands, the skipped-analysis wording, the
-coverage-gate caveat and the rule pitfalls are in
-`development-commands/resources/static-analysis.md`. For SonarQube, the `sonarqube`
-plugin's `sonar-analyze` skill does the run, if it's installed. Don't restate any of
+reaches every line you add or edit. For a project that uses SonarQube or SonarCloud,
+the commands, the skipped-analysis wording, the coverage-gate caveat and the rule
+pitfalls are in `development-commands/resources/sonar-analysis.md`, and the `sonarqube`
+plugin's `sonar-analyze` skill does the run if it's installed. Don't restate any of
 that here.
 
 **Before opening, run the pre-publish trace check** in `resources/pr-trace-check.md`
 on the title, body, commit messages and diff, and run it again after any later edit to
 the title or body.
 
-**If this PR resolves a GitHub issue and targets the default branch (`main`), its body must include
-`Closes #N`** so GitHub closes the issue automatically on merge — no separate
-manual close step. A PR for informal work with no tracking issue (a small doc fix,
+**If this PR resolves a GitHub issue, its body must include `Closes #N`** so GitHub
+closes the issue automatically on merge, with no separate manual close step.
+`Refs #N` only links an issue and never closes it, so don't use it on a PR that
+resolves one. A PR for informal work with no tracking issue (a small doc fix,
 a workflow correction) has nothing to close; don't invent a `Closes #N` for one.
 **A sub-agent's PR into a parallel batch's integration branch should *not* claim
-`Closes #N`** — GitHub only auto-closes an issue when the merging PR targets the
-repo's default branch, so that close would silently never fire. Put every closing
-reference for the batch's issues in the final integration-branch → `main` PR
-instead (see "Reviewing and merging" below).
+`Closes #N`** — merging it would close the issue while its work is still only on the
+integration branch, before the batch's final PR lands. Put every closing reference for
+the batch's issues in the final integration-branch PR instead (see "Reviewing and
+merging" below).
 
 **Every PR against `main` must say in its body that it is to be squash-merged**, and
 must actually be merged with `--squash` — state this in the PR body at creation time,
@@ -86,7 +87,28 @@ are the exception, since they don't block each other.
 
 ## Verify after opening
 
-Right after opening the PR, and again after every push to it, run:
+Right after opening the PR, and again after every push to it, do this in order.
+
+**1. Check for conflicts first.** A PR that conflicts with its base never gets a merge
+commit for CI to build, so its checks never start, and `gh pr checks --watch` then
+waits forever.
+
+```bash
+gh pr view <PR> --json mergeable,mergeStateStatus
+```
+
+- `mergeable: CONFLICTING` (or `mergeStateStatus: DIRTY`) means conflicts. Fix them
+  before anything else. In the branch's worktree, `git fetch origin`, then
+  `git merge origin/<base>` (the PR's base branch), resolve the files, run the
+  project's tests, commit, and push. Don't rebase a branch that is already pushed, since
+  that needs a force-push (`git-safety`). If resolving a conflict means choosing between
+  two behaviors, stop and ask the user. Then run this check again.
+- `mergeable: UNKNOWN` means GitHub is still working it out, usually right after a push.
+  Wait a few seconds and ask again until it answers.
+- `mergeStateStatus: BLOCKED` or `BEHIND` is not a conflict. `BLOCKED` is usually a
+  required check or review still outstanding, which is what the watch is for.
+
+**2. Then watch the checks.** Only once there are no conflicts:
 
 ```bash
 gh pr checks <PR> --watch
@@ -98,7 +120,7 @@ or N failing). Run it as a background command and wait for it to exit rather tha
 polling.
 
 On a failure, find out why: `gh run view --log-failed`, and for a SonarCloud quality
-gate, the PR's open issues. Fix it, push, and run the watch again. After 3 fix attempts
+gate, the PR's open issues. Fix it, push, and start again from step 1. After 3 fix attempts
 on the same failure, stop and give the user the cause, what was tried, and the options.
 
 ## Merging — the one absolute rule
@@ -258,8 +280,8 @@ orchestrator does a single consolidation pass there — any shared docs this rep
 maintains (e.g. `CHANGELOG.md`'s `[Unreleased]` section), referencing every issue in
 the round — committed directly on the integration branch. Then it opens one final PR
 from the integration branch to `main`, **with a `Closes #N` for every issue in the
-round** — this is the only PR in the whole batch that targets the default branch,
-so it's the only place any of those closes actually take effect. **Only the user
+round** — this is the only PR in the whole batch that carries them, so the issues
+close when the batch's work reaches its base branch, not before. **Only the user
 merges this PR**, under any circumstances, regardless of how clean the
 orchestrator's own review of the batch was.
 

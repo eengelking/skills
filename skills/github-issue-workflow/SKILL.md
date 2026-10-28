@@ -15,7 +15,7 @@ out.
 ## Development-branch workflow (a `development` branch exists)
 
 If `git ls-remote --exit-code --heads origin development` exits 0, issue work branches off and merges into `development` instead of
-`main`, and a hotfix issue closes differently. Read `resources/development-branch.md`
+`main`, and a hotfix has two paths depending on whether `development` matches `main`. Read `resources/development-branch.md`
 alongside this file. Any other exit means this file applies as written; every
 mention of `main` below is the standard workflow.
 

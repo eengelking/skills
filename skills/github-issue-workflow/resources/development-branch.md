@@ -14,11 +14,11 @@ in both workflows; only the points below change.
 
 - Branch off `development`, and the closing PR targets `development`. See
   `git-branching`'s `resources/development-branch.md` for branch names.
-- The PR carries `Closes #N`, and the issue is closed when that PR merges. GitHub only
-  acts on a closing keyword in a PR into the default branch, so it won't close the issue
-  by itself. After confirming `state: MERGED`, close it with `gh issue close` and
-  verify it, as in `github-pr-merge`'s `resources/development-branch.md` ("After a
-  merge"). The release PR closes nothing.
+- The PR carries `Closes #N`, and the issue is closed when that PR merges into
+  `development`. There is no manual close step. After confirming `state: MERGED`, verify
+  the issue is closed, as in `github-pr-merge`'s `resources/development-branch.md`
+  ("After a merge"). The release PR closes nothing. `Refs #N` only links an issue and
+  never closes it, so a PR that resolves an issue never uses it.
 - A merged PR still doesn't authorize starting the next issue.
 
 ## Parallel batches
@@ -36,9 +36,9 @@ PR bumps the version (see `github-release`).
 Which path a hotfix takes depends on whether `development` matches `main`; see
 `git-branching`'s `resources/development-branch.md`.
 
-- **`development` differs from `main`.** The hotfix PR targets `main`, the default
-  branch, so `Closes #N` on it closes the issue when it merges. The backport PR into
-  `development` uses `Refs #N`. The user tells the agent when to do the backport. Once
+- **`development` differs from `main`.** The hotfix PR targets `main` and carries
+  `Closes #N`, so the issue closes when it merges. The backport PR into
+  `development` uses `Refs #N`, because the issue is already closed. The user tells the agent when to do the backport. Once
   the hotfix merges the issue closes; track the backport in a comment or follow-up. A
   hotfix waiting only on that backport does not count as the "one open issue" in the
   sequencing gate; other work can start. The Validation section is run against the
@@ -46,7 +46,7 @@ Which path a hotfix takes depends on whether `development` matches `main`; see
   PR into `development`.
 - **`development` matches `main`.** The fix is an ordinary branch and PR into
   `development`, so the "Where the work lands" rules above apply: `Closes #N` in the
-  PR, and the agent closes the issue after the merge. There is no backport.
+  PR, which closes the issue when it merges. There is no backport.
 
 ## Closing out
 
