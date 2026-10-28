@@ -31,22 +31,35 @@ the maintainer as an issue. Don't carry it silently into a release.
 ## Type-check against the host's declarations
 
 A plugin that uses Claude Code's plugin API can be type-checked against the host's
-declaration file, `claude-code.d.ts`. The engine writes that file only while an
-interactive session watches the plugin folder (it is also written under a temp folder
-when the `plugin-authoring` skill loads). To check by hand:
+declaration file, `claude-code.d.ts`. There is no command that makes it. The engine
+writes it in two situations:
 
-1. Find a `claude-code.d.ts` (if there are several, take the newest with `ls -t`), for example:
+- while an interactive session has loaded the plugin from a folder it watches, it fills
+  the plugin's own `.claude-plugin/types/` folder, and `tsc -p <plugin>` then works as is;
+- whenever the `plugin-authoring` skill loads, it writes a copy under a temp folder
+  that belongs to that process. After a restart, the next load writes a new one.
+
+To check by hand:
+
+1. **Find the newest copy.** `find -H` follows `/tmp`, which is a symlink on macOS (a
+   plain `find /tmp` returns nothing there):
 
    ```bash
-   find "${TMPDIR:-/tmp}" /tmp -path '*plugin-authoring/types/claude-code.d.ts' 2>/dev/null | head
+   find -H "${TMPDIR:-/tmp}" /tmp -path '*plugin-authoring/types/claude-code.d.ts' -exec ls -t {} + 2>/dev/null | head -1
    ```
 
-2. Copy it to the plugin's git-ignored `.claude-plugin/types/` folder (the project's
-   tsconfig says the exact name, such as `.claude-plugin/types/claude-code/index.d.ts`).
-3. Run `tsc -p <plugin>/tsconfig.json`.
+2. **If that prints nothing, load the `plugin-authoring` skill, then run step 1 again.**
+   In an interactive Claude Code session, type `/plugin-authoring`; an agent can load
+   it with the Skill tool. The skill names the file's path when it loads. Older copies
+   from earlier Claude Code versions may also be on disk, which is why step 1 takes the
+   newest.
+3. Copy the file to the plugin's git-ignored `.claude-plugin/types/` folder (the
+   project's tsconfig says the exact name, such as
+   `.claude-plugin/types/claude-code/index.d.ts`).
+4. Run `tsc -p <plugin>/tsconfig.json`.
 
-**If you cannot find the declaration file, say so. Never report the check as passing.**
-A type-check that did not run is not a pass.
+**If you still cannot find the declaration file, say so. Never report the check as
+passing.** A type-check that did not run is not a pass.
 
 ## Keep host-only code thin
 
