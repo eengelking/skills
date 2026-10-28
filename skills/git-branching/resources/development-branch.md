@@ -21,10 +21,12 @@ are the whole story.
 ## Sync before branching
 
 ```bash
-git checkout development && git pull
+git fetch origin
 ```
 
-Don't assume `development` is current, same as `main` in the standard workflow.
+Don't assume `development` is current, same as `main` in the standard workflow. The
+branch is then created as a worktree forked from `origin/development`, per
+`worktree-workflow.md`.
 
 ## Which branch forks from where
 
@@ -35,15 +37,25 @@ Don't assume `development` is current, same as `main` in the standard workflow.
 | Parallel batch: orchestrator's integration branch | `batch/<description>-round<n>` | `development` | `development` |
 | Parallel batch: each sub-agent | `issue/<n>-<slug>` | the integration branch | the integration branch |
 | Release prep (version bump + changelog retitle) | `release-prep/<version>` | `development` | `development` |
-| Hotfix | `hotfix/<n>-<slug>` | `main` | `main` |
+| Hotfix, `development` differs from `main` | `hotfix/<n>-<slug>` | `main` | `main` |
+| Hotfix, `development` matches `main` | `hotfix/<n>-<slug>` | `development` | `development` |
 
 The integration branch means what it always has: the orchestrator's branch for a
 worktree batch. It is not `development`. `isolation: "worktree"` and the
 plain-command constraint for sub-agents apply exactly as in `SKILL.md`.
 
-A hotfix is the one case that forks from `main`. Sync with `git checkout main && git
-pull` first. See `github-release`'s `resources/development-branch.md` for the full
-hotfix procedure, including the cherry-pick back into `development` that keeps the two
+A hotfix forks from `main` only when `development` holds work `main` doesn't. Fetch
+first, then compare contents:
+
+```bash
+git fetch origin && git diff --quiet origin/main origin/development && echo matches || echo differs
+```
+
+If they match, there's nothing in `development` to protect, so the fix is made there
+like any other change and the next release carries it with a PATCH bump. That avoids a
+cherry-pick that would do nothing useful. If they differ, the hotfix forks from
+`origin/main`. See `github-release`'s `resources/development-branch.md` for both
+procedures, including the cherry-pick back into `development` that keeps the two
 branches from drifting. The cherry-pick happens when the user tells the agent to do
 it; it gets its own branch off `development` (e.g. `hotfix/<n>-<slug>-backport`).
 
