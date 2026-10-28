@@ -1,6 +1,6 @@
 ---
 name: documentation-sync
-description: Covers going from an uncommitted change to a commit whose accompanying docs are correct, or a deliberate confirmation that none apply. Precondition — a change is staged or about to be committed, in any project. Postcondition — every doc that owns a slice the change touches is updated in the same commit — a state fact goes in the project's status doc (e.g. CLAUDE.md), a procedure goes in the skill that owns it, a spec-governed behavior defers to SPEC.md, and a case that fits neither cleanly gets asked about rather than guessed. Load this before committing any change, not just before a release — a change that isn't reflected in the doc describing it is exactly the kind of gap that's invisible until someone hits it. This is a generic, project-agnostic skill; a project's own doc-ownership table (which doc owns which kind of change, in that specific repo) belongs in that project's own `.claude/skills/`, not here. For bulk-backfilling or topping up a project's doc set — with parallel doc-writing subagents and cross-doc reconciliation — see the `documentation-bootstrap` skill instead.
+description: Covers going from an uncommitted change to a commit whose accompanying docs are correct, or a deliberate confirmation that none apply. Precondition — a change is staged or about to be committed, in any project. Postcondition — every doc that owns a slice the change touches is updated in the same commit — a state fact goes in the project's status doc (e.g. CLAUDE.md), a procedure goes in the skill that owns it, a spec-governed behavior defers to SPEC.md, and a case that fits neither cleanly gets asked about rather than guessed. The same split holds for instruction files: rules, constraints and authority (what and why) stay in the project's CLAUDE.md/PROJECT.md and agent definitions, while steps, commands and checklists (how) live in skills, with the test and the method for moving them in `resources/what-why-vs-how.md`. Load this before committing any change, not just before a release — a change that isn't reflected in the doc describing it is exactly the kind of gap that's invisible until someone hits it. This is a generic, project-agnostic skill; a project's own doc-ownership table (which doc owns which kind of change, in that specific repo) belongs in that project's own `.claude/skills/`, not here. For bulk-backfilling or topping up a project's doc set — with parallel doc-writing subagents and cross-doc reconciliation — see the `documentation-bootstrap` skill instead.
 ---
 
 # Keeping documentation in sync
@@ -96,6 +96,11 @@ nobody notices), and a procedure written into a status doc quietly re-bloats the
 file every session pays for, undoing the reason this split exists. Both failure
 modes are worse than pausing to ask, and neither is a call an agent should make
 alone when it's genuinely unclear.
+
+The same split applies to instructions: a project's instruction files state rules, and
+skills hold the steps. When a project instruction file has grown steps, commands and
+checklists, or you're about to add some, see `resources/what-why-vs-how.md` for the test
+and the method for moving them.
 
 ## SPEC.md is the source of truth, when a project has one
 
