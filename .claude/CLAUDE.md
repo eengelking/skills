@@ -19,7 +19,7 @@ The operator uses shorthand in place of typing a full request out. Case-insensit
 | `plmk` | "Please let me know if you have any questions or if I can provide any further context and/or information." |
 | `wni` | "What is the next GitHub issue to resolve?" |
 | `pri` | "Please review the following Github issue and begin implementation." |
-| `prm` | "PR has been merged into its base branch. Confirm `state: MERGED`, close each issue the PR carried `Closes #N` for (GitHub ignores the keyword for a PR into `development`) and verify it is closed, then remove the branch's worktree, delete the branch locally and on the remote, and prune." |
+| `prm` | "PR has been merged into its base branch. Confirm `state: MERGED`, close and verify each `Closes #N` issue (GitHub ignores it for a PR into `development`), remove the worktree, delete the branch locally and on the remote, prune, then check out the base branch and pull it." |
 | `cii` | "Please review outstanding docs/ISSUES.md and create GitHub issues for anything not yet tracked. Let me know when done." |
 | `pnb` | "Please process the next batch of queued items." |
 
@@ -62,7 +62,7 @@ Below, "the base branch" means `development` if it exists and `main` otherwise. 
 
 ## Always Branch First
 
-Before the first `Edit` or `Write` of *any* change to this repo — check the current branch. If it's `main` or `development`, create the working branch as a git worktree before touching a single file. Fork from the base branch (from `main` for a hotfix only when `development` differs from it). This holds regardless of size ("just a typo fix"), formality ("no issue for this, just drafting"), or how the request was phrased ("draft a revised README" is still a change once you start writing it to disk) — the decision to skip a tracking issue and the decision to skip a branch are unrelated, and only the first is ever legitimate. See `/eengelking:git-branching` for the mechanics, including the pre-commit hook that backstops this rule technically rather than relying on memory alone. The hook should block commits on both `main` and `development`.
+Before the first `Edit` or `Write` of *any* change to this repo — check the current branch. If it's `main` or `development`, create the working branch as a git worktree under `.claude/worktrees/` (inside the repo, never beside it) before touching a single file. Fork from the base branch (from `main` for a hotfix only when `development` differs from it). This holds regardless of size ("just a typo fix"), formality ("no issue for this, just drafting"), or how the request was phrased ("draft a revised README" is still a change once you start writing it to disk) — the decision to skip a tracking issue and the decision to skip a branch are unrelated, and only the first is ever legitimate. See `/eengelking:git-branching` for the mechanics, including the pre-commit hook that backstops this rule technically rather than relying on memory alone. The hook should block commits on both `main` and `development`.
 
 ## Skills
 

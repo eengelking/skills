@@ -12,6 +12,10 @@ tagged after the fact, from the history of that file.
 
 ### Changed
 
+- `.claude/CLAUDE.md` re-synced with the standard: the `prm` shortcut now ends by checking
+  out the base branch and pulling it, and Always Branch First names `.claude/worktrees/` as
+  the worktree folder. `.claude/PROJECT.md`'s worktree note is trimmed to match.
+
 - `.claude/CLAUDE.md` is now the standard `CLAUDE.md` from the agent repo, copied as is. It
   imports the new `.claude/PROJECT.md`, which holds what is specific to this repo: the
   overview, the pre-PR version check, the rule that sub-agents never edit `plugin.json`'s
