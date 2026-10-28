@@ -1,7 +1,35 @@
-# Containers: podman/docker compose
+# Containers: Podman, Docker, nerdctl
+
+A project runs on one container engine, and the commands are nearly the same across
+them. Use the one the project's docs name, or the one installed. Below, `<engine>` is
+`podman`, `docker`, or `nerdctl` (the Docker-compatible CLI for containerd).
+
+| | Podman | Docker | nerdctl (containerd) |
+|---|---|---|---|
+| Compose | `podman compose` | `docker compose` | `nerdctl compose` |
+| Build an image | `podman build` | `docker build` | `nerdctl build` |
+| Run, list, stop | `podman run`, `ps`, `stop` | `docker run`, `ps`, `stop` | `nerdctl run`, `ps`, `stop` |
+| Shell in a container | `podman exec -it <c> /bin/sh` | `docker exec -it <c> /bin/sh` | `nerdctl exec -it <c> /bin/sh` |
+| Build file | `Containerfile` or `Dockerfile` | `Dockerfile` (reads `Containerfile` with `-f`) | `Dockerfile` (reads `Containerfile` with `-f`) |
+| Daemon | none (rootless by default) | `dockerd` | `containerd`, plus BuildKit for `build` |
+
+Things that differ in practice:
+
+- **nerdctl needs containerd running, and BuildKit for `nerdctl build`.** Without
+  BuildKit, `build` fails even though `run` works.
+- **nerdctl uses containerd namespaces.** Images built in one namespace are invisible in
+  another. Add `--namespace <name>` (for example `k8s.io` for images a local Kubernetes
+  uses) if an image you just built is not found.
+- **Podman tags local images `localhost/<name>`.** Docker and nerdctl use plain
+  `<name>`. Use the full name the engine prints, and don't hard-code the prefix in a
+  script that must run on more than one engine.
+- A project's compose file or wrapper script may only support one engine. Check its docs
+  before swapping engines.
+
+## Running via compose
 
 ```bash
-podman compose up          # or `docker compose up` — builds + serves per the repo's compose file
+<engine> compose up          # builds and serves per the repo's compose file
 ```
 
 **A plain `up` (or even `up --build`) after a code change can silently serve
@@ -16,49 +44,33 @@ Whenever code under the image's build context has changed (application code,
 dependency manifests, Dockerfile/Containerfile, migrations), use one of:
 
 ```bash
-podman compose down && podman compose up --build -d
-podman compose up --build -d --force-recreate
+<engine> compose down && <engine> compose up --build -d
+<engine> compose up --build -d --force-recreate
 ```
 
 If the container comes up but the app doesn't seem to reflect a recent
-change, check this before debugging further — see if this repo's own docs
+change, check this before debugging further. See if this repo's own docs
 have a specific "container is up but stale" troubleshooting entry.
 
 ## Building an image by hand
 
-A project without compose builds from its `Containerfile` (or `Dockerfile`):
+A project without compose builds from its `Containerfile` or `Dockerfile`:
 
 ```bash
-podman build -t localhost/<name>:latest -f Containerfile .    # or: docker build ...
-podman exec -it <container> /bin/sh                           # a shell in the running container
+<engine> build -t <name>:latest -f Containerfile .
+<engine> run --rm -p <host-port>:<container-port> <name>:latest
+<engine> exec -it <container> /bin/sh        # a shell in a running container
 ```
 
 The stale-code warning above applies here too: building a new image does not replace a
 container that is already running the old one. Stop and remove the container, then
-start it from the new image.
-
-### A two-stage Containerfile for a Node app
-
-What a good one looks like, so you can tell when a project's has drifted:
-
-- A **build stage** copies the manifests and lockfile first, runs `npm ci
-  --ignore-scripts`, then copies the source and builds. Copying manifests before source
-  means a source-only change reuses the cached install layer.
-- A **run stage** starts from the same slim base, copies the manifests again, runs
-  `npm ci --ignore-scripts --omit=dev`, and copies only the built output from the build
-  stage. Nothing from the source tree or the dev dependencies ships.
-- It ends with a non-root `USER`, a `VOLUME` for the data directory (owned by that
-  user), `EXPOSE` for the ports, and a `CMD`.
-- A build `ARG` that records the commit (and the `ENV` made from it) comes **last**, so
-  a new commit invalidates only that one layer.
-- A slim base image does not carry `openssl`. If the app shells out to it, install it
-  in the run stage with `apt-get install -y --no-install-recommends openssl` and clear
-  the apt lists in the same `RUN`.
+start it from the new image. For what a good Containerfile for a Node app looks like,
+see `node/containerfile.md`.
 
 ## A project's own CLI wrapper
 
 Some projects ship a wrapper command for their container (a script on `PATH` or in
-`bin/`). When one exists, use it instead of raw `podman` commands, because it holds the
+`bin/`). When one exists, use it instead of raw `<engine>` commands, because it holds the
 project's flags, volume names and ports. Run its `--help` to see the verbs. Typical
 ones:
 

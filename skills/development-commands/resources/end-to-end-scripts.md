@@ -22,12 +22,12 @@ Runs the server plus a traffic simulator for about 20 seconds and asserts that:
 - the state endpoint lists live clients while the simulator runs;
 - the event stream yields a `snapshot` first, then the update events (for example
   `session` and `tick`);
-- the same stream works **through the front end's dev proxy** without buffering. Stamp
+- the same stream works **through the front end's dev proxy** (if the project has one, such as a bundler's dev server) without buffering. Stamp
   each line with the time it arrives: a buffering proxy delivers everything at the end,
   so the arrival times are bunched instead of spread out.
 
-Typical flags: `--no-vite` (skip the proxy check), `--keep`. Run it with the project's
-npm script, which wraps the shell script.
+Typical flags: one to skip the proxy check, and `--keep`. Run it the way the project
+documents, often through a task-runner alias that wraps the shell script.
 
 ## Soak and restart check
 
@@ -37,8 +37,8 @@ and its last 30 seconds. A client that gets none at the end has been starved. A
 `--restart` flag kills the server with `SIGKILL` partway through and starts it again on
 the same database, then checks that clients come back as stale and then recover.
 
-Memory is the server process's, not the wrapper's: when the server runs through `tsx` or
-a shell, find the PID that is listening on the port
+Memory is the server process's, not the wrapper's: when the server runs through a
+launcher, a shell or a task runner, find the PID that is listening on the port
 (`lsof -nP -tiTCP:<port> -sTCP:LISTEN`) and read its RSS with `ps -o rss= -p <pid>`.
 
 ## Browser cost check
@@ -57,7 +57,8 @@ tmux window each, each in its own git worktree, against the throwaway server. Th
 **costs model usage**, so say so to the user before running it, and use the smallest
 model that shows the behavior.
 
-- Needs `node`, `curl`, `git`, `tmux` and `claude` on `PATH`.
+- Its `--help` lists the tools it needs on `PATH`. Typically `curl`, `git`, `tmux` and
+  `claude`, plus whatever runs the project's server.
 - It has an `up` and a `down` command. `down` must remove only what `up` made.
 - Attach with `tmux attach -t <name>`. Each new folder asks once whether to trust it,
   so accept it in every window before sending a prompt.

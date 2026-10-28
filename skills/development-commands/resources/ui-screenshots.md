@@ -6,7 +6,8 @@ width, waits, optionally runs JavaScript in the page and prints the JSON result,
 full-page PNG, and stops Chrome and deletes the profile.
 
 Needs Chrome or Chromium and Node 22 or later (the script uses the built-in
-`WebSocket`).
+`WebSocket`). The app being
+photographed can be written in any language; only the screenshot script needs Node.
 
 ## Get the script
 

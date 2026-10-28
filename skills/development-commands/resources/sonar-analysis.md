@@ -1,8 +1,9 @@
-# Static analysis before the PR
+# SonarQube and SonarCloud: analysis before the PR
 
-Run the project's analyzer on the files you changed before opening a PR, so a fix does
-not start a loop with the quality gate in CI. The SonarQube CLI is the example below;
-if the project uses another analyzer, the same rules apply.
+For a project that uses SonarQube or SonarCloud. Run the analyzer on the files you
+changed before opening a PR, so a fix does not start a loop with the quality gate in CI.
+A project with a different analyzer follows its own docs; the habits below (say when a
+run was skipped, test every line you touch) still apply.
 
 If the `sonarqube` plugin is installed, its `sonar-analyze` skill runs the analysis
 for you. The notes here cover what the plugin does not tell you.
@@ -53,8 +54,4 @@ A `sonar-project.properties` file at the repo root controls what the analysis se
 Read the file before assuming a path is analyzed, and update it when you add a tree of
 generated files or a new test layout.
 
-## CodeQL
-
-CodeQL (for example the `security-extended` query set) usually runs only in CI. It
-does not run on your machine. Its results appear in the repo's Security tab, under Code
-scanning. Fix what it flags in the same PR.
+For CodeQL results from the pipeline, see `codeql-results.md`.

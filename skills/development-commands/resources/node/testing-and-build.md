@@ -29,7 +29,7 @@ A project can run `axe-core` over rendered pages in its unit tests. If it does:
   that tracks it, and comes out when it is fixed.
 - axe in a unit-test DOM cannot judge color contrast or target size, because those
   need a real layout. When a change touches color or size, load `axe.min.js` into a
-  real page (see `ui-screenshots.md` for driving one) and run it in each theme and mode.
+  real page (see `../ui-screenshots.md` for driving one) and run it in each theme and mode.
 
 ## Builds
 
@@ -57,4 +57,26 @@ npx vite preview                  # serves an already-built front end, to check 
 - Stop every server you started when you finish. Check with `lsof -nP -iTCP -sTCP:LISTEN`
   that the port is free.
 - To see the app with real-looking data, don't point a dev server at the project's real
-  database. See `throwaway-server.md` and `database-seeding.md`.
+  database. See `../throwaway-server.md` and `../database-seeding.md`.
+
+## A throwaway server from the built output
+
+For a Node server, the pattern in `../throwaway-server.md` looks like this. The
+variable names are the project's; read them from its docs.
+
+```bash
+npm run build
+PORT=<free-port> DB_PATH=<temp-dir>/app.db TOKEN=<random> node server/dist/index.js
+```
+
+Node can pick the free port and make the credential, with no other tool installed:
+
+```bash
+node -e "const s=require('net').createServer().listen(0,'127.0.0.1',()=>{console.log(s.address().port);s.close()})"
+node -e "console.log(require('crypto').randomBytes(24).toString('hex'))"
+```
+
+A project whose server and a traffic simulator are both npm scripts runs the simulator
+in a second terminal: `npm run <simulator-script> -- --url "http://127.0.0.1:$PORT"`.
+The built server runs under `tsx` or plain `node`; when you read its memory use, find the
+PID that is listening on the port rather than the wrapper's (`../end-to-end-scripts.md`).

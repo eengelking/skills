@@ -11,7 +11,7 @@ This file covers the npm behavior that trips people up.
 - A nested package can carry its own `engines` that differs from the root. Read the
   `package.json` of the folder you are working in.
 - Node 22 or later has a built-in `WebSocket`, which scripts that drive a browser over
-  the DevTools protocol rely on (see `ui-screenshots.md`).
+  the DevTools protocol rely on (see `../ui-screenshots.md`).
 
 ## Install
 

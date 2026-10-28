@@ -1,39 +1,41 @@
 # Building and previewing a docs site
 
-For a repo that builds a documentation site from its own files. The build script's path
-and flags are the project's; the examples use common ones. Read its docs and `--help`.
+For a repo that builds a documentation site from its own files. The generator and its
+commands are the project's, so read its docs and the build script's `--help`. The
+habits below hold for any generator.
 
 ## Build
 
-The site is usually its own package, with its own `package.json` and lockfile, so
-install inside it, not from the repo root (`node-npm.md`):
+The build command is whatever the project documents. Common ones:
 
 ```bash
-cd site && npm ci --ignore-scripts
+node site/scripts/build.mjs        # a project's own Node build script
+mkdocs build                       # MkDocs
+hugo                               # Hugo
+bundle exec jekyll build           # Jekyll
 ```
 
-Then build:
-
-```bash
-node site/scripts/build.mjs --latest-only     # newest version only, quick (seconds)
-node site/scripts/build.mjs                   # every version
-```
-
-- `--latest-only` is for checking your change. It is fast and enough for most edits.
-- The full multi-version build reads git tags to find the other versions, so fetch them
-  first: `git fetch --tags`. A shallow or tagless clone builds fewer versions than CI,
-  and a broken link in an old version only shows up in the full build.
-- A build that rejects a link or a page has told you something real. Fix the link or
-  the page; don't loosen the check.
+- **Install the site's own dependencies where they live.** If the site is its own
+  package with its own manifest and lockfile, install inside its folder, not from the
+  repo root (for Node, `node/npm.md`; for Python, `python/testing.md`).
+- **Build the quick version while you work, the full one before you finish.** Some
+  builds offer a "latest version only" flag that takes seconds. A full build can read
+  git tags to find every documented version, so fetch them first (`git fetch --tags`).
+  A shallow or tagless clone builds fewer versions than CI, and a broken link in an old
+  version only shows up in the full build.
+- **A build that rejects a link or a page has told you something real.** Fix the link
+  or the page. Don't loosen the check.
 
 ## Preview
 
+Serve the output folder with any static file server and open it:
+
 ```bash
-python3 -m http.server -d site/out 4400
+python3 -m http.server -d <output-dir> 4400     # needs Python 3.7 or later
 ```
 
-Open `http://127.0.0.1:4400`. Stop the server when you finish. Check the port is free
-afterward.
+Open `http://127.0.0.1:4400`. Stop the server when you finish, and check the port is
+free afterward.
 
 ## Check how it looks
 

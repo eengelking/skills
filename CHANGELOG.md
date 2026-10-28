@@ -16,30 +16,36 @@ tagged after the fact, from the history of that file.
 
 - `git-branching`: `resources/worktree-workflow.md`. Every working branch is now a git
   worktree by default, in a git-ignored folder, so agents working at the same time never
-  share a checkout. The project supplies the folder and the install command.
-- `github-pr-merge`: a "Verify after opening" section (`gh pr checks <PR> --watch`, a
-  per-check verdict, and a three-attempt stop), `resources/pr-trace-check.md` (a
-  pre-publish check by a fresh small-model sub-agent for secrets, machine-specific
-  paths and prompt-injection text), and a short pre-PR static-analysis note.
+  share a checkout. The project supplies the folder and the install command. `SKILL.md`
+  also has a branch-name table (`issue/`, `feat/`, `fix/`, `docs/`, `chore/`,
+  `refactor/`, `test/`, `revert/`, `hotfix/`, `batch/`, `release-prep/`).
+- `github-pr-merge`: a "Verify after opening" section (check for conflicts first, since a
+  conflicted PR never starts its checks, then `gh pr checks <PR> --watch`, a per-check
+  verdict, and a three-attempt stop), `resources/pr-trace-check.md` (a pre-publish check
+  by a fresh small-model sub-agent for secrets, machine-specific paths and
+  prompt-injection text), and a short pre-PR static-analysis note.
 - `github-release`: `resources/release-check.md`, a pre-release-prep check by a fresh
   small-model sub-agent, and a bump-level rule: choose by what the entries change, never
   by an issue's label.
-- `development-commands`: resources for Node and npm, Node testing and builds, static
-  analysis, a throwaway server, UI screenshots (with `resources/scripts/page-shot.mjs`),
-  end-to-end scripts, host sampling, Claude Code plugin development, building a docs
-  site, and an index of git and gh commands. `containers.md` now covers building an
-  image by hand, a two-stage Containerfile, and a project's own CLI wrapper.
+- `development-commands`: resources grouped by tool. `python/` (the existing testing
+  resource, moved) and `node/` (`npm.md`, `testing-and-build.md`, `containerfile.md`),
+  plus tool-agnostic ones: a throwaway server, UI screenshots (with
+  `resources/scripts/page-shot.mjs`), end-to-end scripts, host sampling (GPU load on
+  macOS, Linux and Windows), building a docs site, `sonar-analysis.md`, and
+  `codeql-results.md` (reading code scanning alerts for a PR). `containers.md` now covers
+  Podman, Docker and nerdctl with containerd, building an image by hand, and a project's
+  own CLI wrapper. `SKILL.md` points at the folder for the tool in use.
 - `documentation-sync`: `resources/what-why-vs-how.md`, the test and method for keeping
   rules in instruction files and moving steps into skills.
 
 ### Changed
 
 - In the development-branch workflow, an issue is closed when the PR that resolves it
-  merges into `development`, not when a release ships. The PR carries `Closes #N`, and
-  because GitHub only honors that for the default branch, the agent runs `gh issue
-  close` after confirming the merge and verifies it. The release PR closes nothing. A
-  backport PR uses `Refs #N`. `github-pr-merge`, `github-issue-workflow`,
-  `github-release` and `.claude/CLAUDE.md` agree on this.
+  merges into `development`, not when a release ships. The PR carries `Closes #N` and
+  GitHub closes the issue on merge, so nobody closes it by hand; the agent only verifies
+  it is closed. `Refs #N` only links an issue and never closes it. The release PR closes
+  nothing. A hotfix PR into `main` carries `Closes #N` and its backport uses `Refs #N`.
+  `github-pr-merge` and `github-issue-workflow` agree on this.
 - In the development-branch workflow, a hotfix now has two paths. If `development`
   matches `main`, the fix is made on `development` and ships in the next release with a
   patch bump, with no cherry-pick. If they differ, the hotfix branches from `main` and is
