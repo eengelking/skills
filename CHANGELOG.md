@@ -10,6 +10,14 @@ tagged after the fact, from the history of that file.
 
 ## [Unreleased]
 
+### Changed
+
+- `.claude/CLAUDE.md` is now the standard `CLAUDE.md` from the agent repo, copied as is. It
+  imports the new `.claude/PROJECT.md`, which holds what is specific to this repo: the
+  overview, the pre-PR version check, the rule that sub-agents never edit `plugin.json`'s
+  `version`, and the release details. The `pmm` shortcut is replaced by the standard's
+  `pri` and `prm`.
+
 ## [1.14.0] - 2026-10-28
 
 ### Added
