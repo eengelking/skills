@@ -12,6 +12,11 @@ tagged after the fact, from the history of that file.
 
 ### Changed
 
+- The `podium-reporter` marketplace entry now points at `dist/claudecode` in the Podium
+  repo instead of `mod/podium-reporter`, which Podium no longer has. The built `dist/` is
+  tracked on Podium's `main`, so the entry follows `main` with no `ref` or `sha`. This
+  must not merge until Podium's release PR (`development` to `main`) has landed.
+
 - `.claude/CLAUDE.md` re-synced with the standard: the `prm` shortcut now ends by checking
   out the base branch and pulling it, and Always Branch First names `.claude/worktrees/` as
   the worktree folder. `.claude/PROJECT.md`'s worktree note is trimmed to match.
