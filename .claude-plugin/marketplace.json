@@ -17,7 +17,7 @@
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/eengelking/podium.git",
-        "path": "mod/podium-reporter"
+        "path": "dist/claudecode"
       }
     }
   ]
